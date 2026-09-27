@@ -20,6 +20,7 @@ onBeforeUnmount(() => removeEventListener('keydown', onKey))
 
 <template>
   <div class="l-site">
+    <PaperGrain />
     <a
       class="l-skip"
       href="#main"

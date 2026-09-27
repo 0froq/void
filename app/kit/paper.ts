@@ -90,8 +90,7 @@ void main() {
   vec3 lit = mix(uPaper, uAccent, 1.0 - exp(-dens * 1.6));
   vec3 col = mix(wet, lit, uDark);
   float grain = (fib - 0.5) * 0.03 + (tooth - 0.5) * 0.022;
-  // Apply paper fibre/tooth grain texture exclusively in light mode;
-  // dark mode stays sleek, deep and completely noise-free
+  // Light stock carries the fibre. Dark stays flat; the night tooth is a canvas grain on top.
   col = mix(col * (1.0 + grain), col, uDark);
   o = vec4(col, 1.0);
 }`
