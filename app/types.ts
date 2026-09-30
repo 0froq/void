@@ -1,5 +1,5 @@
 export interface Signature {
-  /** WebGL paper fibre and tooth behind every page. */
+  /** WebGL sheet and washes behind the page. The tooth lives on `Paper`. */
   paper: boolean
   /** One pen line threading the page head, the label column and the last full stop. */
   line: boolean

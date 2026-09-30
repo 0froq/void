@@ -54,8 +54,6 @@ float fbm(vec2 p) {
 void main() {
   vec2 px = vec2(uv.x * uRes.x, (1.0 - uv.y) * uRes.y);
   vec2 doc = px + vec2(0.0, uScroll);
-
-  float fib = fbm(doc * vec2(0.09, 0.03)) * 0.5 + fbm(doc * vec2(0.03, 0.09) + 9.0) * 0.5;
   float tooth = noise(doc * 0.8) * 0.6 + noise(doc * 2.1) * 0.4;
 
   float dens = 0.0;
@@ -89,9 +87,6 @@ void main() {
   vec3 wet = uPaper * exp(-absorb * dens);
   vec3 lit = mix(uPaper, uAccent, 1.0 - exp(-dens * 1.6));
   vec3 col = mix(wet, lit, uDark);
-  float grain = (fib - 0.5) * 0.03 + (tooth - 0.5) * 0.022;
-  // Light stock carries the fibre. Dark stays flat; the night tooth is a canvas grain on top.
-  col = mix(col * (1.0 + grain), col, uDark);
   o = vec4(col, 1.0);
 }`
 
@@ -154,7 +149,12 @@ export function createPaper(options: PaperOptions): PaperLayer | null {
   if (!glContext)
     return null
   const gl: WebGL2RenderingContext = glContext
-  document.body.prepend(canvas)
+  // Sit in the site sheet, above its fill and under the type, so washes stay visible
+  const host = document.querySelector('.l-site')
+  if (host)
+    host.prepend(canvas)
+  else
+    document.body.prepend(canvas)
   document.documentElement.classList.add('has-paper')
   if (washes)
     document.documentElement.classList.add('has-bloom')
