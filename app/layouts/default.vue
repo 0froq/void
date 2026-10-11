@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Paper } from '@froq/ui'
+
 const { product } = useAppConfig()
 const { t } = useI18n()
 const installed = useInstalled()

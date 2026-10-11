@@ -18,8 +18,8 @@
   --section-scale: 1;
   --pad: clamp(20px, 4vw, 56px);
   --gap: 24px;
-  --section: clamp(120px, 22vh, 240px);
-  --section-tight: clamp(72px, 14vh, 160px);
+  --section: clamp(120px, 22svh, 240px);
+  --section-tight: clamp(72px, 14svh, 160px);
   --cols: 12;
   --span-margin: 3;
   --span-body: 9;
@@ -56,6 +56,7 @@
 }
 
 html {
+  overflow-x: clip;
   background: var(--bg);
   transition:
     background-color 0.6s var(--ease),
@@ -70,6 +71,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0;
 }
 
@@ -93,8 +95,9 @@ code {
   font-size: 0.86em;
 }
 
-/* Content sits above the paper; each sheet is its own stacking context so the pen's
-   canvas (z-index -1 inside it) draws under the type but over the paper */
+/* Content sits above the wash. The library paints that wash on body, an opaque canvas
+   at z-index 0. This sheet stays clear and above it, so blooms show through the type.
+   The pen canvas (z-index -1 inside each sheet) draws under the type and over the wash. */
 .l-site {
   position: relative;
   z-index: 1;
@@ -102,7 +105,11 @@ code {
 
 .ui-paper {
   position: relative;
-  background: var(--bg);
+  background: transparent;
+}
+
+.l-site.ui-paper {
+  background: transparent;
 }
 
 .ui-paper-grain {
@@ -217,7 +224,7 @@ code {
   display: grid;
   align-content: end;
   min-height: 100svh;
-  padding: 0 var(--pad) clamp(32px, 6vh, 64px);
+  padding: 0 var(--pad) clamp(32px, 6svh, 64px);
 }
 
 .l-word {
@@ -247,7 +254,7 @@ code {
 
 .has-hand .l-tagline {
   position: absolute;
-  top: 24vh;
+  top: 24svh;
   right: var(--pad);
   font-size: calc(clamp(56px, 6.4vw, 104px) * var(--poster-scale));
   color: transparent;
@@ -315,7 +322,7 @@ html:not(.has-hand) .l-release {
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   gap: var(--gap);
   align-items: end;
-  margin-top: clamp(28px, 5vh, 56px);
+  margin-top: clamp(28px, 5svh, 56px);
   padding-top: 20px;
   border-top: 1px solid var(--line);
 }
@@ -421,6 +428,7 @@ html:not(.has-hand) .l-release {
 }
 
 .l-body {
+  min-width: 0;
   grid-column: span var(--span-body);
 }
 
@@ -611,7 +619,7 @@ html:not(.has-hand) .l-release {
   display: grid;
   justify-items: center;
   gap: 20px;
-  padding: clamp(180px, 34vh, 360px) var(--pad);
+  padding: clamp(180px, 34svh, 360px) var(--pad);
   text-align: center;
 }
 
@@ -671,7 +679,7 @@ html:not(.has-hand) .l-release {
   display: grid;
   align-content: end;
   min-height: 78svh;
-  padding: 0 var(--pad) clamp(32px, 6vh, 64px);
+  padding: 0 var(--pad) clamp(32px, 6svh, 64px);
 }
 
 .l-page-head.is-compact {
@@ -701,7 +709,7 @@ html:not(.has-hand) .l-release {
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   gap: var(--gap);
   align-items: baseline;
-  margin-top: clamp(28px, 5vh, 56px);
+  margin-top: clamp(28px, 5svh, 56px);
   padding-top: 20px;
   border-top: 1px solid var(--line);
 }
@@ -851,8 +859,8 @@ a.l-entry:hover .l-entry-title {
 
 .l-section.is-pager {
   align-items: baseline;
-  padding-top: clamp(96px, 18vh, 200px);
-  padding-bottom: clamp(96px, 16vh, 180px);
+  padding-top: clamp(96px, 18svh, 200px);
+  padding-bottom: clamp(96px, 16svh, 180px);
 }
 
 .l-section.is-pager .l-label a {
@@ -870,7 +878,7 @@ a.l-entry:hover .l-entry-title {
 }
 
 .l-final.is-end {
-  padding: clamp(160px, 30vh, 320px) var(--pad);
+  padding: clamp(160px, 30svh, 320px) var(--pad);
 }
 
 .l-final.is-end .l-final-title {
@@ -884,7 +892,8 @@ main,
   transition: opacity 1.2s var(--ease);
 }
 
-.stroke-layer {
+.stroke-layer,
+.ui-pen-layer {
   transition: opacity 1.2s var(--ease);
 }
 
@@ -895,14 +904,15 @@ main,
 .is-installed main,
 .is-installed .l-top,
 .is-installed .l-foot,
-.is-installed .stroke-layer {
+.is-installed .stroke-layer,
+.is-installed .ui-pen-layer {
   opacity: 0;
   pointer-events: none;
 }
 
 .l-installed {
   position: fixed;
-  top: 24vh;
+  top: 24svh;
   left: var(--pad);
   z-index: 30;
   display: grid;
@@ -1003,7 +1013,7 @@ button.l-cta {
   .l-page-foot,
   .l-section,
   .l-price {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .l-tagline,
@@ -1043,7 +1053,7 @@ button.l-cta {
   }
 
   .l-quotes {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1118,7 +1128,7 @@ button.l-cta {
 /* Docs */
 .l-section.is-docs {
   align-items: start;
-  padding-top: clamp(48px, 8vh, 96px);
+  padding-top: clamp(48px, 8svh, 96px);
 }
 
 .l-toc {
