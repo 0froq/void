@@ -4,7 +4,7 @@ import nuxt from './.nuxt/eslint.config.mjs'
 export default antfu(
   {
     // Markdown formatters rewrite MDC's `---` prop blocks into setext headings
-    ignores: ['content/**', 'README.md'],
+    ignores: ['content/**', 'README.md', 'vendor/ui/**'],
     pnpm: true,
     typescript: true,
     vue: true,
