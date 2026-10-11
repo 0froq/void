@@ -86,8 +86,9 @@ export function useSignature(root: Ref<HTMLElement | undefined>, options: Signat
     },
     colors: readColors,
     mixColors: mixHex,
-    // Underlines, not rings, and connecting ink stays at full weight, as this page draws it.
-    fadeRoute: false,
+    // Travel between marks fades toward the paper. Same curve as lig: 0.24 ink in the
+    // middle, full ink within 32px of a mark. Section names stay underlines.
+    fadeRoute: true,
     labels: 'line',
   })
 
