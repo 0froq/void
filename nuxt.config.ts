@@ -66,6 +66,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // Workers Builds sets WORKERS_CI, which otherwise makes Nitro pick
+    // cloudflare-module and switch Nuxt Content to D1.
+    preset: 'static',
     output: {
       publicDir: 'dist',
     },
