@@ -1,6 +1,7 @@
 {
   "site": {
     "title": "void. The product that returns nothing.",
+    "description": "void is a product with zero bytes, zero side effects and zero features.",
     "skip": "Skip to content",
     "footer": "© 2026 void. A froQ studio project."
   },

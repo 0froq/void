@@ -25,7 +25,11 @@ const next = computed(() => data.value?.next)
 const toNote = (path: string): string => link(`/notes/${path.split('/').pop()}`)
 
 useHead({ title: () => note.value?.title })
-useSeoMeta({ description: () => note.value?.description })
+useShareMeta({
+  title: () => note.value?.title,
+  description: () => note.value?.description,
+  type: 'article',
+})
 </script>
 
 <template>
