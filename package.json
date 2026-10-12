@@ -11,6 +11,7 @@
     "generate": "nuxt generate",
     "deploy": "pnpm generate && cf deploy",
     "preview": "nuxt preview",
+    "preview:deploy": "pnpm generate && cf previews deploy",
     "lint": "eslint . --cache --concurrency=auto",
     "lint:fix": "eslint . --cache --concurrency=auto --fix",
     "typecheck": "nuxt typecheck",
