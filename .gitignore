@@ -12,6 +12,7 @@
 .output
 .turbo
 .wrangler
+.cloudflare
 cache
 coverage
 dist

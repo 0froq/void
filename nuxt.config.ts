@@ -66,7 +66,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'cloudflare_pages',
+    output: {
+      publicDir: 'dist',
+    },
     prerender: {
       crawlLinks: true,
       routes: ['/', '/zh'],
