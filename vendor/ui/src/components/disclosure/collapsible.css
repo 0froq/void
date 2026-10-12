@@ -1,0 +1,64 @@
+.ui-collapsible {
+  min-width: 0;
+  color: var(--ui-fg);
+  font-family: var(--ui-font-text);
+}
+
+.ui-collapsible-trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid var(--ui-line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.ui-collapsible-trigger:hover:not(:disabled) {
+  color: var(--ui-accent);
+}
+
+.ui-collapsible-trigger:focus-visible {
+  outline: 1px solid var(--ui-accent);
+  outline-offset: 4px;
+}
+
+.ui-collapsible-trigger:disabled {
+  color: var(--ui-muted);
+  cursor: not-allowed;
+}
+
+.ui-collapsible-chevron {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  margin-inline-end: 2px;
+  border-inline-end: 1px solid currentColor;
+  border-block-end: 1px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--ui-dur) var(--ui-ease);
+}
+
+.ui-collapsible-trigger[aria-expanded='true'] .ui-collapsible-chevron {
+  transform: rotate(45deg);
+}
+
+.ui-collapsible-panel {
+  padding-block: 12px;
+}
+
+.ui-collapsible-panel[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-collapsible-chevron {
+    transition: none;
+  }
+}

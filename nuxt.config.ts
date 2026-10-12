@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     },
   },
 
+  build: { transpile: ['@froq/ui'] },
+
   modules: [
     '@nuxt/content',
     '@nuxtjs/i18n',
@@ -26,6 +28,7 @@ export default defineNuxtConfig({
     '@fontsource/instrument-serif/400.css',
     '@fontsource/instrument-serif/400-italic.css',
     '~/assets/css/kit.css',
+    '@froq/ui/style.css',
   ],
 
   app: {
