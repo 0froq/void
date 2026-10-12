@@ -10,6 +10,10 @@ useHead({
   style: [{ key: 'theme', innerHTML: () => themeStyle(product.theme) }],
   title: () => copy('notFound.title'),
 })
+useShareMeta({
+  title: () => copy('notFound.title'),
+  description: () => copy('notFound.lede'),
+})
 </script>
 
 <template>

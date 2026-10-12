@@ -36,7 +36,10 @@ const prev = computed(() => pages.value[index.value - 1])
 const next = computed(() => pages.value[index.value + 1])
 
 useHead({ title: () => doc.value?.title })
-useSeoMeta({ description: () => doc.value?.description })
+useShareMeta({
+  title: () => doc.value?.title,
+  description: () => doc.value?.description,
+})
 </script>
 
 <template>
