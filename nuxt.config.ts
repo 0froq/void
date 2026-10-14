@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
+import { countCardWords } from '@froq/og-covers-layer/card-words'
 import { IMAGE_ORIGIN } from './app/utils/site'
-import { countCardWords } from './layers/og-covers/shared/card-words'
 import { changelogEntryRoutes } from './shared/content-routes'
 import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
@@ -9,7 +9,9 @@ import { listPublicShareImages } from './shared/public-files'
 const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineNuxtConfig({
-  extends: ['./layers/og-covers'],
+  extends: [
+    ['github:0froq/og-layer#v0.1.0', { install: true }],
+  ],
 
   compatibilityDate: '2026-09-19',
 
