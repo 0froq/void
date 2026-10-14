@@ -85,6 +85,10 @@ const rootStyle = {
   overflow: 'hidden',
 } as const
 
+// Instrument Serif italic 400, the same face the old satori card used for froQ.
+// nuxt-og-image loads an italic file only when the template contains
+// `font-style: italic` or the class `italic`. `fontStyle` in this object is not scanned,
+// so the mark also carries that CSS literally. Without the file, Takumi slants the roman.
 const markStyle = {
   position: 'absolute',
   right: '56px',
@@ -151,7 +155,10 @@ const bitStyle = { display: 'flex' } as const
 
 <template>
   <div :style="rootStyle">
-    <div :style="markStyle">
+    <div
+      style="font-style: italic"
+      :style="markStyle"
+    >
       froQ
     </div>
     <div :style="titleStyle">
@@ -160,6 +167,7 @@ const bitStyle = { display: 'flex' } as const
     <div :style="footerStyle">
       <div
         v-if="showEvergreen"
+        style="font-style: italic"
         :style="evergreenStyle"
       >
         evergreen
