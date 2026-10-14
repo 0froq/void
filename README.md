@@ -13,27 +13,6 @@ pnpm deploy
 pnpm preview:deploy
 ```
 
-While `pnpm dev` is running, the DevTools inspect panel opens the file in a new editor window at that line and column. Cmd+W closes the new window. The default is Zed:
-
-```bash
-zed --new path/to/file:line:column
-```
-
-`MINI_EDITOR` overrides it. `miniEditor.editor` in `nuxt.config.ts` wins over the env var.
-
-| `MINI_EDITOR` | Command |
-| --- | --- |
-| `zed` (default) | `zed --new file:line:col` |
-| `code` or `vscode` | `code -n -g file:line:col` |
-| `cursor` | `cursor -n -g file:line:col` |
-| `subl` or `sublime` | `subl -n file:line:col` |
-
-```bash
-MINI_EDITOR=cursor pnpm dev
-```
-
-After open, dev-only `placeWindow()` resizes and moves that window (default `900x600`, position `right`). Set `MINI_EDITOR_SIZE`, `MINI_EDITOR_POSITION` (`right`, `center`, `mouse`), or `MINI_EDITOR_PLACE=0` to skip. On macOS, grant **Accessibility** to the app running `pnpm dev`. On Linux X11 install `wmctrl` or `xdotool`; on Wayland use Hyprland or Sway tools, or skip. The module registers nothing outside `nuxt dev`. See `tools/mini-editor/README.md` and `findings.md`.
-
 Deploys on Cloudflare Workers (Worker name `void`). `pnpm generate` writes `dist/`. Worker config is in `cloudflare.config.ts`, static assets directory in `wrangler.config.ts`. Local one-shot publish is `pnpm deploy`.
 
 Workers Builds (GitHub connection, no API token in the repo): `NODE_VERSION=22` (22.22.3 or newer), build `pnpm generate`, production `pnpm exec cf deploy`, preview `pnpm exec cf previews deploy`.
