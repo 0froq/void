@@ -31,6 +31,7 @@ catalogs:
     '@fontsource-variable/geist': ^5.3.0
     '@fontsource-variable/geist-mono': ^5.3.0
     '@fontsource/instrument-serif': ^5.3.0
+    '@froq/og-covers-layer': github:0froq/og-layer#v0.1.0
     '@nuxt/content': ^3.16.1
     '@nuxtjs/i18n': ^10.6.0
     nuxt: ^4.6.1

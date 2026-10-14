@@ -39,6 +39,8 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
+    // Dev-only. setup() returns before registering anything when not `nuxt dev`.
+    './modules/mini-editor',
   ],
 
   // DevTools hosts the OG Image tab (template hot reload). The host package is not a module.

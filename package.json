@@ -22,7 +22,7 @@
     "@fontsource-variable/geist": "catalog:prod",
     "@fontsource-variable/geist-mono": "catalog:prod",
     "@fontsource/instrument-serif": "catalog:prod",
-    "@froq/og-covers-layer": "github:0froq/og-layer#v0.1.0",
+    "@froq/og-covers-layer": "catalog:prod",
     "@froq/ui": "file:vendor/ui",
     "@nuxt/content": "catalog:prod",
     "@nuxtjs/i18n": "catalog:prod",
