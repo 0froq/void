@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
+    "@fontsource/eb-garamond": "catalog:dev",
     "@fontsource/geist-mono": "catalog:dev",
     "@fontsource/noto-serif-sc": "catalog:dev",
     "@nuxt/eslint": "catalog:dev",

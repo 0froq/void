@@ -18,6 +18,8 @@ catalogs:
   dev:
     '@antfu/eslint-config': ^9.5.1
     # Static woff slices for the share card. The site face is the variable package.
+    # Italic face for the share-card froQ mark. OFL-1.1, shipped with the package.
+    '@fontsource/eb-garamond': 5.3.0
     '@fontsource/geist-mono': 5.2.7
     # `400.css` is unicode-range slices. The card keeps the slices a title needs.
     '@fontsource/noto-serif-sc': 5.3.1

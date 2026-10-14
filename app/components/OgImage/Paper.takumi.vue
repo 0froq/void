@@ -27,6 +27,8 @@ const DATE_RE = /(\d{4})-(\d{2})-(\d{2})/
 const fg = '#1a1917'
 const serif = '"Instrument Serif", "Noto Serif SC", serif'
 const mono = '"Geist Mono", ui-monospace, monospace'
+// Watermark only. Title and evergreen stay on Instrument Serif.
+const markFace = '"EB Garamond"'
 
 function formatCardDate(value?: string): string {
   if (!value?.trim())
@@ -85,19 +87,18 @@ const rootStyle = {
   overflow: 'hidden',
 } as const
 
-// Instrument Serif italic 400, the same face the old satori card used for froQ.
-// nuxt-og-image loads an italic file only when the template contains
-// `font-style: italic` or the class `italic`. `fontStyle` in this object is not scanned,
-// so the mark also carries that CSS literally. Without the file, Takumi slants the roman.
+// EB Garamond italic 400. 192px with a deeper inset: the italic is wider than
+// Instrument Serif and the Q tail drops further, and this keeps the same corner clearance.
+// The literal `font-style: italic` on the mark is what makes nuxt-og-image load the italic file.
 const markStyle = {
   position: 'absolute',
-  right: '56px',
-  bottom: '40px',
+  right: '62px',
+  bottom: '58px',
   display: 'flex',
-  fontFamily: serif,
+  fontFamily: markFace,
   fontStyle: 'italic',
   fontWeight: 400,
-  fontSize: '200px',
+  fontSize: '192px',
   lineHeight: 1,
   letterSpacing: '-0.04em',
   color: 'rgba(26, 25, 23, 0.11)',

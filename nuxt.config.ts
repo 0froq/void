@@ -100,6 +100,17 @@ export default defineNuxtConfig({
         preload: false,
       },
       {
+        // froQ mark only. True italic, not a slanted roman. OFL-1.1.
+        // Notice: `@fontsource/eb-garamond/LICENSE` and `public/fonts/EB-Garamond-OFL.txt`.
+        name: 'EB Garamond',
+        provider: 'fontsource',
+        weights: [400],
+        styles: ['italic'],
+        subsets: ['latin', 'latin-ext'],
+        global: true,
+        preload: false,
+      },
+      {
         name: 'Geist Mono',
         provider: 'fontsource',
         weights: [400],
