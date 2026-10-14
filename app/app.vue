@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import type { ProductConfig } from './types'
+
 const { product } = useAppConfig()
 const { t } = useI18n()
 const localeHead = useLocaleHead()
 
 function skinStyle(): string {
-  const skin = product.skin
+  // Nuxt's resolved app config omits optional keys that are not set.
+  const skin = (product as ProductConfig).skin
   const vars: [string, string | number | undefined][] = [
     ['--font-display', skin?.font?.display],
     ['--font-text', skin?.font?.text],

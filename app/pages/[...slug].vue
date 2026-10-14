@@ -22,10 +22,24 @@ useHead(() => ({
   // A filled landing title is the whole document title. An empty one falls through to the site title.
   titleTemplate: page.value?.head || !page.value?.title ? undefined : '%s',
 }))
+const files = useRuntimeConfig().public.publicFiles
+const override = computed(() => contentOgOverride(page.value, 'pages', files))
+if (override.value === undefined) {
+  defineOgImage(ogComponentName(page.value), {
+    title: () => paperFields(page.value).title,
+    evergreen: () => paperFields(page.value).evergreen,
+    created: () => paperFields(page.value).created,
+    updated: () => paperFields(page.value).updated,
+    words: () => paperFields(page.value).words,
+    ...ogExtraProps(page.value),
+  }, {
+    alt: () => paperFields(page.value).title,
+  })
+}
 useShareMeta({
   title: () => page.value?.title,
   description: () => page.value?.description,
-  cover: () => contentCoverSource('pages', page.value),
+  image: () => override.value === undefined ? false : override.value,
 })
 </script>
 

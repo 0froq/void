@@ -25,11 +25,25 @@ const next = computed(() => data.value?.next)
 const toNote = (path: string): string => link(`/notes/${path.split('/').pop()}`)
 
 useHead({ title: () => note.value?.title })
+const files = useRuntimeConfig().public.publicFiles
+const override = computed(() => contentOgOverride(note.value, 'notes', files))
+if (override.value === undefined) {
+  defineOgImage(ogComponentName(note.value), {
+    title: () => paperFields(note.value).title,
+    evergreen: () => paperFields(note.value).evergreen,
+    created: () => paperFields(note.value).created,
+    updated: () => paperFields(note.value).updated,
+    words: () => paperFields(note.value).words,
+    ...ogExtraProps(note.value),
+  }, {
+    alt: () => paperFields(note.value).title,
+  })
+}
 useShareMeta({
   title: () => note.value?.title,
   description: () => note.value?.description,
   type: 'article',
-  cover: () => contentCoverSource('notes', note.value),
+  image: () => override.value === undefined ? false : override.value,
 })
 </script>
 

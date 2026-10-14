@@ -1,5 +1,6 @@
-// Share-image paths for a Nuxt Content page.
-// Order: frontmatter `cover`, a file dropped in `public/covers/`, the generated card, then the site image.
+// Share-image overrides for a Nuxt Content page.
+// Order: frontmatter `cover`, `ogImage.url`, a file in `public/covers/`.
+// Anything else is drawn by defineOgImage.
 import { isFilled } from './text'
 
 export interface ContentCoverSource {
@@ -9,6 +10,25 @@ export interface ContentCoverSource {
   path: string
   /** Optional frontmatter `cover`: a `public/` path or an absolute https URL. */
   cover?: string | null
+}
+
+export interface PaperSource {
+  title?: string | null
+  evergreen?: boolean | null
+  kind?: string | null
+  created?: string | null
+  date?: string | null
+  updated?: string | null
+  last_modified?: string | null
+  words?: number | null
+}
+
+export interface PaperFields {
+  title: string
+  evergreen: boolean
+  created: string
+  updated: string
+  words: number
 }
 
 const ABSOLUTE_HTTPS = /^https:\/\//i
@@ -33,44 +53,35 @@ export function defaultContentCoverPath(collection: string, locale: string, slug
   return `/covers/${collection}/${locale}/${slug}.png`
 }
 
-/** Build-time card written by the og-covers module. Not committed. */
-export function autoContentCoverPath(collection: string, locale: string, slug: string): string {
-  return `/covers/_card/${collection}/${locale}/${slug}.png`
-}
-
 /**
- * Frontmatter `cover` if it exists (or is already https), else
- * `public/covers/<collection>/<locale>/<slug>.png` when that file exists,
- * else the generated card when that file exists, else `fallback` (site `/og.png`).
+ * Frontmatter `cover` when it is https or an existing public file,
+ * else `public/covers/<collection>/<locale>/<slug>.png` when that file exists.
+ * Undefined means the page should call defineOgImage.
  */
-export function resolveContentCover(
-  source: ContentCoverSource,
+export function explicitContentCover(
+  source: ContentCoverSource | undefined,
   hasPublicFile: (urlPath: string) => boolean,
-  fallback: string,
-): string {
-  const locale = contentCoverLocale(source.path)
-  const slug = contentCoverSlug(source.collection, source.path)
-  const candidates: string[] = []
+): string | undefined {
+  if (!source)
+    return undefined
 
   if (isFilled(source.cover)) {
     if (ABSOLUTE_HTTPS.test(source.cover))
       return source.cover.trim()
     const custom = publicUrlPath(source.cover)
-    if (custom)
-      candidates.push(custom)
+    if (custom && hasPublicFile(custom))
+      return custom
   }
 
+  const locale = contentCoverLocale(source.path)
+  const slug = contentCoverSlug(source.collection, source.path)
   if (locale && slug) {
-    candidates.push(defaultContentCoverPath(source.collection, locale, slug))
-    candidates.push(autoContentCoverPath(source.collection, locale, slug))
+    const dropped = defaultContentCoverPath(source.collection, locale, slug)
+    if (hasPublicFile(dropped))
+      return dropped
   }
 
-  for (const candidate of candidates) {
-    if (hasPublicFile(candidate))
-      return candidate
-  }
-
-  return publicUrlPath(fallback) ?? '/og.png'
+  return undefined
 }
 
 export function contentCoverSource(
@@ -80,6 +91,68 @@ export function contentCoverSource(
   if (!page)
     return undefined
   return { collection, path: page.path, cover: page.cover }
+}
+
+export function paperFields(page: PaperSource | null | undefined): PaperFields {
+  return {
+    title: page?.title?.trim() || '',
+    evergreen: page?.evergreen === true || page?.kind === 'evergreen',
+    created: filled(page?.created) || filled(page?.date) || '',
+    updated: filled(page?.last_modified) || filled(page?.updated) || '',
+    words: typeof page?.words === 'number' && page.words > 0 ? page.words : 0,
+  }
+}
+
+export function hasShareFile(files: unknown, urlPath: string): boolean {
+  return Array.isArray(files) && files.includes(urlPath)
+}
+
+export interface OgImageFrontmatter {
+  url?: string
+  component?: string
+  props?: Record<string, unknown>
+}
+
+/**
+ * `false` turns the image off. A string is a manual cover.
+ * `undefined` means the page should call defineOgImage.
+ * Frontmatter `cover` wins over `ogImage.url`.
+ */
+export function contentOgOverride(
+  page: { path: string, cover?: string | null, ogImage?: boolean | OgImageFrontmatter | null } | null | undefined,
+  collection: string,
+  files: unknown,
+): string | false | undefined {
+  if (!page)
+    return undefined
+  if (page.ogImage === false)
+    return false
+  const ogUrl = page.ogImage && page.ogImage !== true ? page.ogImage.url : undefined
+  return explicitContentCover({
+    collection,
+    path: page.path,
+    cover: isFilled(page.cover) ? page.cover : ogUrl,
+  }, path => hasShareFile(files, path))
+}
+
+export function ogComponentName(page: { ogImage?: boolean | OgImageFrontmatter | null } | null | undefined): 'Paper' {
+  const og = page?.ogImage
+  const name = og && og !== true ? og.component?.trim() : undefined
+  if (!name || name === 'Paper')
+    return 'Paper'
+  // Frontmatter may name another OgImage component. The call site passes it through.
+  return name as 'Paper'
+}
+
+export function ogExtraProps(page: { ogImage?: boolean | OgImageFrontmatter | null } | null | undefined): Record<string, unknown> {
+  const og = page?.ogImage
+  if (!og || og === true || !og.props)
+    return {}
+  return og.props
+}
+
+function filled(value: string | null | undefined): string {
+  return value?.trim() || ''
 }
 
 function splitContentPath(contentPath: string): string[] {
