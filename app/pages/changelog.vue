@@ -12,6 +12,7 @@ useHead({ title: () => t('changelog.label') })
 useShareMeta({
   title: () => t('changelog.label'),
   description: () => t('changelog.lede'),
+  cover: () => ({ collection: 'changelog', path: contentPath('/changelog') }),
 })
 </script>
 

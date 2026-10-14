@@ -65,6 +65,10 @@ declare module 'nuxt/schema' {
   interface AppConfig {
     product: ProductConfig
   }
+  interface PublicRuntimeConfig {
+    /** URL paths of share images under `public/`, including generated cards. */
+    publicFiles: string[]
+  }
 }
 
 export type Theme = 'light' | 'dark'

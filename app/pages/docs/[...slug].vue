@@ -39,6 +39,7 @@ useHead({ title: () => doc.value?.title })
 useShareMeta({
   title: () => doc.value?.title,
   description: () => doc.value?.description,
+  cover: () => contentCoverSource('docs', doc.value),
 })
 </script>
 

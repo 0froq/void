@@ -1,5 +1,6 @@
 import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
+import { listPublicShareImages } from './shared/public-files'
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-19',
@@ -14,12 +15,19 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      publicFiles: listPublicShareImages(),
+    },
+  },
+
   build: { transpile: ['@froq/ui'] },
 
   modules: [
     '@nuxt/content',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
+    './modules/og-covers',
   ],
 
   css: [
