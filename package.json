@@ -24,27 +24,28 @@
     "@fontsource/instrument-serif": "catalog:prod",
     "@froq/ui": "file:vendor/ui",
     "@nuxt/content": "catalog:prod",
+    "@nuxt/fonts": "catalog:prod",
     "@nuxtjs/i18n": "catalog:prod",
     "nuxt": "catalog:prod",
-    "vue": "catalog:prod"
+    "nuxt-og-image": "catalog:prod",
+    "vue": "catalog:prod",
+    "zod": "catalog:prod"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
     "@fontsource/geist-mono": "catalog:dev",
     "@fontsource/noto-serif-sc": "catalog:dev",
     "@nuxt/eslint": "catalog:dev",
-    "@resvg/resvg-js": "catalog:dev",
+    "@takumi-rs/core": "catalog:dev",
     "cf": "catalog:dev",
     "eslint": "catalog:dev",
     "eslint-plugin-format": "catalog:dev",
     "lint-staged": "catalog:dev",
-    "satori": "catalog:dev",
+    "nuxtseo-devtools-host": "catalog:dev",
     "simple-git-hooks": "catalog:dev",
-    "slugify": "catalog:dev",
     "typescript": "catalog:dev",
     "vue-tsc": "catalog:dev",
-    "wrangler": "catalog:dev",
-    "yaml": "catalog:dev"
+    "wrangler": "catalog:dev"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && npx lint-staged"

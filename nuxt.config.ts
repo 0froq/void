@@ -1,6 +1,27 @@
+import { fileURLToPath } from 'node:url'
+import { IMAGE_ORIGIN } from './app/utils/site'
+import { countCardWords } from './shared/card-words'
+import { changelogEntryRoutes } from './shared/content-routes'
 import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
 import { listPublicShareImages } from './shared/public-files'
+
+const rootDir = fileURLToPath(new URL('.', import.meta.url))
+
+// Faces the stylesheet already loads, or that only exist on the visitor's machine.
+// Listing them stops `@nuxt/fonts` from downloading stand-ins.
+const siteFaces = [
+  'Geist',
+  'Geist Variable',
+  'Geist Mono Variable',
+  'Iowan Old Style',
+  'Georgia',
+  'Songti SC',
+  'Source Han Serif SC',
+  'PingFang SC',
+  'Hiragino Sans GB',
+  'Noto Sans SC',
+] as const
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-19',
@@ -10,6 +31,8 @@ export default defineNuxtConfig({
     // An explicit `title: ''` must stay empty: Content otherwise names the page after the file.
     'content:file:afterParse': ({ file, content, collection }) => {
       keepEmptyTitle(content, file.body)
+      if (typeof file.body === 'string')
+        (content as { words?: number }).words = countCardWords(file.body)
       if (collection.name === 'notes' || collection.name === 'docs')
         markFinalStop(content.body)
     },
@@ -24,11 +47,79 @@ export default defineNuxtConfig({
   build: { transpile: ['@froq/ui'] },
 
   modules: [
+    '@nuxt/fonts',
     '@nuxt/content',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
-    './modules/og-covers',
+    'nuxt-og-image',
   ],
+
+  // DevTools hosts the OG Image tab (template hot reload). The host package is not a module.
+  devtools: { enabled: true },
+
+  // `og:image` is absolute on this origin. `og:url` stays on void.froq.me via useShareMeta.
+  // X does not fetch images from froq.me.
+  site: {
+    url: IMAGE_ORIGIN,
+    name: 'void',
+  },
+
+  ogImage: {
+    zeroRuntime: true,
+    defaults: {
+      width: 1200,
+      height: 630,
+      extension: 'png',
+    },
+    // Satori/fontless only. Takumi takes unicode-range slices from `@nuxt/fonts`.
+    fontSubsets: ['latin', 'latin-ext', 'chinese-simplified'],
+    compatibility: {
+      prerender: { browser: false },
+    },
+  },
+
+  fonts: {
+    providers: { google: false },
+    // `--font-*` lists system CJK faces. Scanning them would try to fetch substitutes.
+    processCSSVariables: false,
+    defaults: {
+      weights: [400],
+      styles: ['normal'],
+      preload: false,
+      fallbacks: [],
+    },
+    families: [
+      ...siteFaces.map(name => ({ name, provider: 'none' as const })),
+      {
+        name: 'Instrument Serif',
+        provider: 'fontsource',
+        weights: [400],
+        styles: ['normal', 'italic'],
+        subsets: ['latin', 'latin-ext'],
+        global: true,
+        preload: false,
+      },
+      {
+        name: 'Geist Mono',
+        provider: 'fontsource',
+        weights: [400],
+        styles: ['normal'],
+        subsets: ['latin', 'latin-ext'],
+        global: true,
+        preload: false,
+      },
+      {
+        name: 'Noto Serif SC',
+        provider: 'fontsource',
+        weights: [400],
+        styles: ['normal'],
+        // Default subsets stop at latin. Han is this named slice.
+        subsets: ['chinese-simplified'],
+        global: true,
+        preload: false,
+      },
+    ],
+  },
 
   css: [
     '@fontsource-variable/geist/index.css',
@@ -71,6 +162,8 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
     detectBrowserLanguage: false,
+    // Matches `site.url` so site-config does not error. Canonical links are set in useShareMeta.
+    baseUrl: IMAGE_ORIGIN,
   },
 
   nitro: {
@@ -82,7 +175,7 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/zh'],
+      routes: ['/', '/zh', ...changelogEntryRoutes(rootDir, 'en')],
     },
   },
 

@@ -36,10 +36,24 @@ const prev = computed(() => pages.value[index.value - 1])
 const next = computed(() => pages.value[index.value + 1])
 
 useHead({ title: () => doc.value?.title })
+const files = useRuntimeConfig().public.publicFiles
+const override = computed(() => contentOgOverride(doc.value, 'docs', files))
+if (override.value === undefined) {
+  defineOgImage(ogComponentName(doc.value), {
+    title: () => paperFields(doc.value).title,
+    evergreen: () => paperFields(doc.value).evergreen,
+    created: () => paperFields(doc.value).created,
+    updated: () => paperFields(doc.value).updated,
+    words: () => paperFields(doc.value).words,
+    ...ogExtraProps(doc.value),
+  }, {
+    alt: () => paperFields(doc.value).title,
+  })
+}
 useShareMeta({
   title: () => doc.value?.title,
   description: () => doc.value?.description,
-  cover: () => contentCoverSource('docs', doc.value),
+  image: () => override.value === undefined ? false : override.value,
 })
 </script>
 

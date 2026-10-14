@@ -1,11 +1,16 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
+import { defineOgImageSchema } from 'nuxt-og-image/content'
 
 // Every file lives under a locale folder (`en/`, `zh/`), so paths start with `/en`, `/zh`.
-// Optional frontmatter `cover`: a `public/` path or an absolute https URL.
-// `evergreen` (or `kind: evergreen`) draws the green label on the generated card.
+// Optional frontmatter `cover`: a `public/` path or an absolute https URL. It wins over `ogImage.url`.
+// `ogImage: false` turns the card off. `ogImage.component` / `props` override the paper card.
+// `evergreen` (or `kind: evergreen`) draws the green label on the card.
 // `date` / `created` is the created date. `updated` / `last_modified` shows only when evergreen.
+// `words` is filled at parse time for the card; it is not frontmatter.
 const card = {
   cover: z.string().optional(),
+  ogImage: defineOgImageSchema({ z }),
+  words: z.number().optional(),
   evergreen: z.boolean().optional(),
   kind: z.string().optional(),
   created: z.string().optional(),

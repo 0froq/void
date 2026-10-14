@@ -59,6 +59,9 @@ export interface ProductConfig {
 }
 
 declare module 'nuxt/schema' {
+  interface CustomAppConfig {
+    product: ProductConfig
+  }
   interface AppConfigInput {
     product?: Partial<ProductConfig>
   }
@@ -66,7 +69,7 @@ declare module 'nuxt/schema' {
     product: ProductConfig
   }
   interface PublicRuntimeConfig {
-    /** URL paths of share images under `public/`, including generated cards. */
+    /** URL paths of share images committed under `public/`. Generated cards are not in this list. */
     publicFiles: string[]
   }
 }

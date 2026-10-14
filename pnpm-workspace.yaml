@@ -6,6 +6,7 @@ packages:
   - .
 
 onlyBuiltDependencies:
+  - '@takumi-rs/core'
   - esbuild
   - simple-git-hooks
   - unrs-resolver
@@ -16,27 +17,29 @@ catalog: {}
 catalogs:
   dev:
     '@antfu/eslint-config': ^9.5.1
-    # 5.2.7 is the last static woff. Later releases are variable woff2, which satori cannot parse.
+    # Static woff slices for the share card. The site face is the variable package.
     '@fontsource/geist-mono': 5.2.7
+    # `400.css` is unicode-range slices. The card keeps the slices a title needs.
     '@fontsource/noto-serif-sc': 5.3.1
     '@nuxt/eslint': ^1.17.0
-    '@resvg/resvg-js': 2.6.2
+    '@takumi-rs/core': ^2.15.0
     cf: 1.0.0-beta.12
     eslint: ^9.39.0
     eslint-plugin-format: ^2.0.1
     lint-staged: ^16.1.6
-    satori: 0.55.3
+    nuxtseo-devtools-host: ^1
     simple-git-hooks: ^2.14.0
-    slugify: 1.6.9
     typescript: ~5.9.3
     vue-tsc: ^3.3.11
     wrangler: ^4.136.0
-    yaml: 2.9.1
   prod:
     '@fontsource-variable/geist': ^5.3.0
     '@fontsource-variable/geist-mono': ^5.3.0
     '@fontsource/instrument-serif': ^5.3.0
     '@nuxt/content': ^3.16.1
+    '@nuxt/fonts': ^1
     '@nuxtjs/i18n': ^10.6.0
-    nuxt: ^4.5.2
+    nuxt: ^4.6.1
+    nuxt-og-image: ^7
     vue: ^3.5.43
+    zod: ^4.6.6
