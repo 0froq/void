@@ -11,7 +11,6 @@ test('zed opens a new window at file:line:col', () => {
     editor: 'zed',
     bin: 'zed',
     args: ['--new', spec],
-    windowSize: false,
   })
   assert.equal(editorCommand('/usr/local/bin/zed', target)?.bin, '/usr/local/bin/zed')
   assert.deepEqual(editorCommand('/usr/local/bin/zed', target)?.args, ['--new', spec])
@@ -23,14 +22,12 @@ test('VS Code and Cursor use -n -g', () => {
       editor: 'code',
       bin: 'code',
       args: ['-n', '-g', spec],
-      windowSize: false,
     })
   }
   assert.deepEqual(editorCommand('cursor', target), {
     editor: 'cursor',
     bin: 'cursor',
     args: ['-n', '-g', spec],
-    windowSize: false,
   })
   assert.equal(editorCommand('/opt/cursor/Cursor', target)?.bin, '/opt/cursor/Cursor')
 })
@@ -41,7 +38,6 @@ test('Sublime uses -n and the position suffix', () => {
       editor: 'subl',
       bin: 'subl',
       args: ['-n', spec],
-      windowSize: false,
     })
   }
 })

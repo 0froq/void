@@ -2,8 +2,8 @@ import { basename } from 'node:path'
 
 /**
  * New-window argv for the editors froQ already uses.
- * None of these CLIs take a window size. `windowSize` is always false
- * so the HTTP status can say so without a second lookup.
+ * None of these CLIs take a window size. After spawn, `placeWindow`
+ * resizes the new window on macOS and Linux when tools are available.
  *
  * Zed (current CLI, `crates/cli`): `-n`/`--new` creates a new workspace.
  * The path argument is `path:line:column` (1-based).
@@ -12,7 +12,7 @@ import { basename } from 'node:path'
  *
  * @param {string} name `zed`, `code`, `cursor`, `subl`, or an absolute path whose basename is one of those
  * @param {{ file: string, line: number, column: number }} target
- * @returns {{ editor: string, bin: string, args: string[], windowSize: false } | null} argv to spawn, or null when this module should not handle the name
+ * @returns {{ editor: string, bin: string, args: string[] } | null} argv to spawn, or null when this module should not handle the name
  */
 export function editorCommand(name, target) {
   const raw = name.trim()
@@ -24,7 +24,6 @@ export function editorCommand(name, target) {
     editor: family.editor,
     bin: isPath(raw) ? raw : family.bin,
     args: [...family.args, spec],
-    windowSize: false,
   }
 }
 

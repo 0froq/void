@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import process from 'node:process'
 import { editorCommand } from './editors.mjs'
 import { resolveProjectFile } from './position.mjs'
+import { parsePlacementOptions, placeWindow } from './window-place.mjs'
 
 const MAX_BODY = 1_500_000
 
@@ -13,23 +14,28 @@ const MAX_BODY = 1_500_000
  * new editor window. There is no reuse: Cmd+W should close that window.
  *
  * @param {string} rootDir
- * @param {{ editor?: string, spawn?: boolean }} [options]
+ * @param {{ editor?: string, spawn?: boolean, size?: string, position?: string, place?: boolean }} [options]
  */
 export function createMiniEditor(rootDir, options = {}) {
   const editorName = options.editor || process.env.MINI_EDITOR || 'zed'
   const spawnEnabled = options.spawn ?? process.env.MINI_EDITOR_NO_SPAWN !== '1'
+  const placement = parsePlacementOptions(
+    { size: options.size, position: options.position, place: options.place },
+    process.env,
+  )
+  const placementHints = new Set()
   /** @type {ReturnType<typeof resolveProjectFile> | null} */
   let last = null
   let devtoolsHook = false
-  /** @type {{ spawned: boolean, reason?: string, editor?: string, command: string[], windowSize: false }} */
-  let lastWindow = { spawned: false, reason: 'idle', command: [], windowSize: false }
+  /** @type {{ spawned: boolean, reason?: string, editor?: string, command: string[], placement: ReturnType<typeof parsePlacementOptions> }} */
+  let lastWindow = { spawned: false, reason: 'idle', command: [], placement }
 
   function markDevtoolsHook() {
     devtoolsHook = true
   }
 
   function status() {
-    return { editor: editorName, devtoolsHook, last, window: lastWindow }
+    return { editor: editorName, devtoolsHook, last, window: lastWindow, placement }
   }
 
   /**
@@ -40,12 +46,12 @@ export function createMiniEditor(rootDir, options = {}) {
     const target = resolveProjectFile(rootDir, spec)
     last = target
     if (!target.ok) {
-      lastWindow = { spawned: false, reason: target.reason, command: [], windowSize: false }
+      lastWindow = { spawned: false, reason: target.reason, command: [], placement }
       return false
     }
     const command = editorCommand(editorName, target)
     if (!command) {
-      lastWindow = { spawned: false, reason: 'unknown-editor', editor: editorName, command: [], windowSize: false }
+      lastWindow = { spawned: false, reason: 'unknown-editor', editor: editorName, command: [], placement }
       return false
     }
     lastWindow = launch(command)
@@ -105,13 +111,13 @@ export function createMiniEditor(rootDir, options = {}) {
   }
 
   /**
-   * @param {{ editor: string, bin: string, args: string[], windowSize: false }} command
+   * @param {{ editor: string, bin: string, args: string[] }} command
    */
   function launch(command) {
     const recorded = {
       editor: command.editor,
       command: [command.bin, ...command.args],
-      windowSize: command.windowSize,
+      placement,
     }
     if (!spawnEnabled)
       return { ...recorded, spawned: false, reason: 'MINI_EDITOR_NO_SPAWN' }
@@ -122,6 +128,20 @@ export function createMiniEditor(rootDir, options = {}) {
       lastWindow = { ...recorded, spawned: false, reason: error.message }
     })
     child.unref()
+    void placeWindow({
+      editor: command.editor,
+      width: placement.width,
+      height: placement.height,
+      position: placement.position,
+      enabled: placement.enabled,
+    }, {
+      log: (message) => {
+        if (placementHints.has(message))
+          return
+        placementHints.add(message)
+        console.warn(message)
+      },
+    }).catch(() => {})
     return { ...recorded, spawned: true }
   }
 

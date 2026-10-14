@@ -32,7 +32,7 @@ zed --new path/to/file:line:column
 MINI_EDITOR=cursor pnpm dev
 ```
 
-None of those CLIs take a window size. Zed, VS Code, Cursor, and Sublime size the new window themselves (`window.newWindowDimensions` for VS Code and Cursor). The module registers nothing outside `nuxt dev`. Detail and the Mac checklist are in `tools/mini-editor/findings.md`.
+After open, dev-only `placeWindow()` resizes and moves that window (default `900x600`, position `right`). Set `MINI_EDITOR_SIZE`, `MINI_EDITOR_POSITION` (`right`, `center`, `mouse`), or `MINI_EDITOR_PLACE=0` to skip. On macOS, grant **Accessibility** to the app running `pnpm dev`. On Linux X11 install `wmctrl` or `xdotool`; on Wayland use Hyprland or Sway tools, or skip. The module registers nothing outside `nuxt dev`. See `tools/mini-editor/README.md` and `findings.md`.
 
 Deploys on Cloudflare Workers (Worker name `void`). `pnpm generate` writes `dist/`. Worker config is in `cloudflare.config.ts`, static assets directory in `wrangler.config.ts`. Local one-shot publish is `pnpm deploy`.
 

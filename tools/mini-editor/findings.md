@@ -32,15 +32,16 @@ Choose the editor with `MINI_EDITOR` or `miniEditor.editor`. An explicit nuxt.co
 
 A binary that is not on `PATH` also returns false, for the same reason. This VM has no `zed`, `code`, `cursor`, or `subl`.
 
-## Window size
+## Window placement
 
-None of these CLIs accept a width, height, or position.
+Editor CLIs still have no geometry flags. After spawn, `placeWindow({ editor, width, height, position })` picks a platform adapter:
 
-- Zed's clap args are `--new`, `--add`, `--wait`, `--existing`, `--reuse`, `--user-data-dir`, `--foreground`. No geometry.
-- VS Code's editor flags are `--new-window`, `--reuse-window`, `--goto`. No geometry. New-window size is the setting `window.newWindowDimensions` (`default`, `inherit`, `offset`, `maximized`, `fullscreen`). Cursor uses that CLI.
-- Sublime's flags are `--new-window`, `--add`, `--wait`, `--project`, `--command`. The filename suffix is `:line` or `:line:column` (1-based). No geometry.
+- **macOS:** `osascript` + System Events (Zed, Code, Cursor, Sublime Text). Retries until the process window exists. Needs Accessibility on the terminal running `pnpm dev`.
+- **Linux X11:** `wmctrl`, else `xdotool`, matched by window class.
+- **Linux Wayland** (`WAYLAND_DISPLAY`): `hyprctl` or `swaymsg` when present; otherwise one hint and skip.
+- **Windows:** no-op.
 
-Size the window once in the editor. The next `--new` / `-n` window follows that app's own setting.
+Defaults: `900x600`, position `right` (main screen, right margin, vertically centered). Configure with `miniEditor.size` / `MINI_EDITOR_SIZE`, `miniEditor.position` / `MINI_EDITOR_POSITION` (`right`, `center`, `mouse`), or `MINI_EDITOR_PLACE=0` to disable. Failures log once and never block open-in-editor. See `tools/mini-editor/README.md`.
 
 ## How `file:line:col` arrives
 
@@ -62,7 +63,7 @@ Every accepted open spawns again. There is no SSE reuse. Two clicks are two wind
 
 `node --test tools/mini-editor/*.test.mjs`.
 
-- `zed` argv is `['zed', '--new', '/path/app.vue:10:4']`. `windowSize` is false.
+- `zed` argv is `['zed', '--new', '/path/app.vue:10:4']`. Placement defaults in `/__mini-editor/status`.
 - `code` / `vscode` argv is `['code', '-n', '-g', spec]`. `cursor` is the same with bin `cursor`. `subl` / `sublime` is `['subl', '-n', spec]`.
 - A fake `zed` on disk was spawned twice. The log was `--new` plus `App.vue:3:2`, then `--new` plus `App.vue:8:1`.
 - `GET /__open-in-editor?file=app/App.vue:6:5` with `cursor` returned that argv, line 6, column 5, and did not call `next()`.
@@ -79,5 +80,5 @@ No GUI editor is installed here, so a real window, Cmd+W, and HMR-from-that-wind
 - Cmd+W closes that window. If it only closes the tab, that is Zed's close-last-item setting, not this hook. Same check for `code` / `cursor` (`window.closeWhenEmpty`) and Sublime.
 - `MINI_EDITOR=cursor pnpm dev`, then `code` and `subl`, if those CLIs are installed.
 - Save in the new window. The page updates through Vite. Root `app.vue` full-reloads; a component should not.
-- Window size is whatever the editor already does. There is no flag to set it from here.
+- After open, the new window resizes to `MINI_EDITOR_SIZE` (default `900x600`) and moves per `MINI_EDITOR_POSITION`. Grant Accessibility if placement does nothing.
 - `nuxt build` was not re-run. The module returns before registering plugins when `dev` is false. Deploy config was not touched.

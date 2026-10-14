@@ -15,7 +15,7 @@ test('open records zed --new and does not spawn when spawn is off', async () => 
   assert.equal(handled, true)
   const window = session.status().window
   assert.equal(window.editor, 'zed')
-  assert.equal(window.windowSize, false)
+  assert.deepEqual(window.placement, { enabled: true, width: 900, height: 600, position: 'right' })
   assert.equal(window.reason, 'MINI_EDITOR_NO_SPAWN')
   assert.equal(window.command[0], 'zed')
   assert.equal(window.command[1], '--new')
@@ -66,7 +66,7 @@ test('GET /__open-in-editor returns the command', async () => {
   assert.match(result.body.command[3], /App\.vue:6:5$/)
   assert.equal(result.body.line, 6)
   assert.equal(result.body.column, 5)
-  assert.equal(result.body.windowSize, false)
+  assert.equal(result.body.placement.position, 'right')
 })
 
 test('POST /__mini-editor/open and a refused file do not call next', async () => {

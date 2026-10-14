@@ -11,6 +11,12 @@ interface DevtoolsHost {
 interface MiniEditorOptions {
   /** `zed` (default), `code` / `vscode`, `cursor`, or `subl` / `sublime`. */
   editor: string
+  /** Window size after open, e.g. `900x600`. Env: `MINI_EDITOR_SIZE`. */
+  size: string
+  /** `right` (default), `center`, or `mouse`. Env: `MINI_EDITOR_POSITION`. */
+  position: string
+  /** Set `false` or `MINI_EDITOR_PLACE=0` to skip window placement. */
+  place: boolean
 }
 
 /**
@@ -27,13 +33,21 @@ export default defineNuxtModule<MiniEditorOptions>({
   },
   defaults: {
     editor: '',
+    size: '',
+    position: '',
+    place: true,
   },
   setup(options, nuxt) {
     if (!nuxt.options.dev)
       return
 
     const editor = options.editor || process.env.MINI_EDITOR || 'zed'
-    const session = createMiniEditor(nuxt.options.rootDir, { editor })
+    const session = createMiniEditor(nuxt.options.rootDir, {
+      editor,
+      size: options.size,
+      position: options.position,
+      place: options.place,
+    })
     let hooked = false
 
     const installHook = () => {
