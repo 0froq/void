@@ -1,5 +1,6 @@
 import type { Nuxt } from 'nuxt/schema'
-import type { Plugin, ViteDevServer } from 'vite'
+import type { Plugin } from 'vite'
+import process from 'node:process'
 import { defineNuxtModule } from 'nuxt/kit'
 import { createMiniEditor } from '../tools/mini-editor/server.mjs'
 
@@ -7,18 +8,32 @@ interface DevtoolsHost {
   openInEditorHooks?: Array<(input: string) => boolean | Promise<boolean>>
 }
 
+interface MiniEditorOptions {
+  /** `zed` (default), `code` / `vscode`, `cursor`, or `subl` / `sublime`. */
+  editor: string
+}
+
 /**
- * Dev-only stand-in for Zed when the inspector asks to open a file.
- * Outside `nuxt dev` this module registers nothing, so the production
- * client and the Nitro build do not include the editor.
+ * Dev-only. The inspector and `/__open-in-editor` open the configured
+ * editor in a new window at file:line:col. Outside `nuxt dev` this
+ * module registers nothing.
+ *
+ * Editor: `miniEditor.editor` in nuxt.config, otherwise `MINI_EDITOR`, otherwise `zed`.
  */
-export default defineNuxtModule({
-  meta: { name: 'mini-editor' },
-  setup(_options, nuxt) {
+export default defineNuxtModule<MiniEditorOptions>({
+  meta: {
+    name: 'mini-editor',
+    configKey: 'miniEditor',
+  },
+  defaults: {
+    editor: '',
+  },
+  setup(options, nuxt) {
     if (!nuxt.options.dev)
       return
 
-    const session = createMiniEditor(nuxt.options.rootDir)
+    const editor = options.editor || process.env.MINI_EDITOR || 'zed'
+    const session = createMiniEditor(nuxt.options.rootDir, { editor })
     let hooked = false
 
     const installHook = () => {
@@ -51,7 +66,6 @@ function editorPlugin(session: ReturnType<typeof createMiniEditor>): Plugin {
     enforce: 'pre',
     apply: 'serve',
     configureServer(server) {
-      session.attach(server as ViteDevServer)
       server.middlewares.use(session.middleware)
     },
   }

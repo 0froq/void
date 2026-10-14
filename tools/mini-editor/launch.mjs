@@ -4,7 +4,8 @@
  * and for an unrecognized binary it passes three argv:
  *   launch.mjs <absolute-file> <line> <column>
  * A recognized editor such as `zed` instead receives one `file:line:col` arg.
- * This script accepts both and forwards them to the dev server.
+ * This script accepts both and asks the dev server to spawn a new window.
+ * `pnpm dev` does not need this: the DevTools hook spawns the editor itself.
  *
  *   LAUNCH_EDITOR=/abs/path/tools/mini-editor/launch.mjs
  */
