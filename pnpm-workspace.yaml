@@ -4,6 +4,7 @@ shellEmulator: true
 
 packages:
   - .
+  - layers/og-covers
 
 onlyBuiltDependencies:
   - '@takumi-rs/core'

@@ -1,7 +1,6 @@
 // Share-image overrides for a Nuxt Content page.
 // Order: frontmatter `cover`, `ogImage.url`, a file in `public/covers/`.
 // Anything else is drawn by defineOgImage.
-import { isFilled } from './text'
 
 export interface ContentCoverSource {
   /** Nuxt Content collection name: `pages`, `notes`, `changelog`, `docs`, or a derived site's own. */
@@ -32,6 +31,10 @@ export interface PaperFields {
 }
 
 const ABSOLUTE_HTTPS = /^https:\/\//i
+
+function isFilled(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0
+}
 
 /** Locale folder from a content path (`/zh/docs/install` → `zh`). */
 export function contentCoverLocale(contentPath: string): string {
@@ -140,7 +143,6 @@ export function ogComponentName(page: { ogImage?: boolean | OgImageFrontmatter |
   const name = og && og !== true ? og.component?.trim() : undefined
   if (!name || name === 'Paper')
     return 'Paper'
-  // Frontmatter may name another OgImage component. The call site passes it through.
   return name as 'Paper'
 }
 

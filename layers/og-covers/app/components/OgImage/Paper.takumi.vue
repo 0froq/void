@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // 1200×630 paper card. Front face of the IssuePeekCard (serif title,
-// evergreen label, mono meta) plus the froQ mark, fully inside, bottom right.
-// No hover, flip, or tilt. Title color is `--ui-fg`.
+// evergreen label, mono meta) plus the brand mark, fully inside, bottom right.
+// No hover, flip, or tilt.
 //
 // Takumi, not Satori. Latin faces are unicode-range slices and Han is the
 // chinese-simplified subset; Takumi walks that fallback chain and reads woff2.
@@ -22,9 +22,22 @@ const props = withDefaults(defineProps<{
   words: 0,
 })
 
+const defaultColors = {
+  title: '#1a1917',
+  paper: '#f4f2ec',
+  border: 'rgba(26, 25, 23, 0.12)',
+  mark: 'rgba(26, 25, 23, 0.11)',
+  meta: '#85837c',
+  evergreen: 'rgba(22, 163, 74, 0.8)',
+} as const
+
+const ogCovers = useAppConfig().ogCovers
+const colors = { ...defaultColors, ...ogCovers?.colors }
+const markText = ogCovers?.mark ?? 'froQ'
+
 const DATE_RE = /(\d{4})-(\d{2})-(\d{2})/
 
-const fg = '#1a1917'
+const fg = colors.title
 const serif = '"Instrument Serif", "Noto Serif SC", serif'
 const mono = '"Geist Mono", ui-monospace, monospace'
 // Watermark only. Title and evergreen stay on Instrument Serif.
@@ -79,8 +92,8 @@ const rootStyle = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  backgroundColor: '#f4f2ec',
-  border: '2px solid rgba(26, 25, 23, 0.12)',
+  backgroundColor: colors.paper,
+  border: `2px solid ${colors.border}`,
   boxSizing: 'border-box',
   padding: '72px 80px 64px',
   position: 'relative',
@@ -101,7 +114,7 @@ const markStyle = {
   fontSize: '192px',
   lineHeight: 1,
   letterSpacing: '-0.04em',
-  color: 'rgba(26, 25, 23, 0.11)',
+  color: colors.mark,
 } as const
 
 const titleStyle = {
@@ -129,7 +142,7 @@ const evergreenStyle = {
   fontStyle: 'italic',
   fontSize: '32px',
   lineHeight: 1,
-  color: 'rgba(22, 163, 74, 0.8)',
+  color: colors.evergreen,
   letterSpacing: '0.04em',
   marginBottom: '14px',
 } as const
@@ -140,7 +153,7 @@ const metaStyle = {
   fontFamily: mono,
   fontSize: '24px',
   lineHeight: 1,
-  color: '#85837c',
+  color: colors.meta,
   letterSpacing: '0.08em',
 } as const
 
@@ -160,7 +173,7 @@ const bitStyle = { display: 'flex' } as const
       style="font-style: italic"
       :style="markStyle"
     >
-      froQ
+      {{ markText }}
     </div>
     <div :style="titleStyle">
       {{ title }}
