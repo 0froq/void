@@ -29,6 +29,7 @@ useShareMeta({
   title: () => note.value?.title,
   description: () => note.value?.description,
   type: 'article',
+  cover: () => contentCoverSource('notes', note.value),
 })
 </script>
 

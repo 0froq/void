@@ -1,10 +1,14 @@
 import type { MaybeRefOrGetter } from 'vue'
-import { canonicalUrl, OG_IMAGE_HEIGHT, OG_IMAGE_URL, OG_IMAGE_WIDTH } from '~/utils/site'
+import type { ContentCoverSource } from '~/utils/cover'
+import { resolveContentCover } from '~/utils/cover'
+import { absoluteImageUrl, canonicalUrl, OG_IMAGE_HEIGHT, OG_IMAGE_PATH, OG_IMAGE_WIDTH } from '~/utils/site'
 
 export interface ShareMetaInput {
   title?: MaybeRefOrGetter<string | undefined>
   description?: MaybeRefOrGetter<string | undefined>
   type?: MaybeRefOrGetter<'website' | 'article' | undefined>
+  /** Content page. Omitted routes (the error page) use `/og.png`. */
+  cover?: MaybeRefOrGetter<ContentCoverSource | null | undefined>
 }
 
 function filled(value: string | undefined, fallback: string): string {
@@ -14,17 +18,28 @@ function filled(value: string | undefined, fallback: string): string {
 
 /**
  * Open Graph / Twitter tags for the current route.
- * Pages pass their title and description; the image and card type are site-wide.
+ * Image order: frontmatter `cover`, `public/covers/<collection>/<locale>/<slug>.png`,
+ * the generated card, then `/og.png`. Image URLs use the Worker origin.
  */
 export function useShareMeta(input: ShareMetaInput = {}): void {
   const route = useRoute()
   const { t } = useI18n()
   const { product } = useAppConfig()
+  const config = useRuntimeConfig()
 
   const title = computed(() => filled(toValue(input.title), t('site.title')))
   const description = computed(() => filled(toValue(input.description), t('site.description')))
   const type = computed(() => toValue(input.type) ?? 'website')
   const url = computed(() => canonicalUrl(route.path))
+  const image = computed(() => {
+    const source = toValue(input.cover)
+    const files = config.public.publicFiles
+    const hasPublicFile = (urlPath: string): boolean => Array.isArray(files) && files.includes(urlPath)
+    const path = source
+      ? resolveContentCover(source, hasPublicFile, OG_IMAGE_PATH)
+      : OG_IMAGE_PATH
+    return absoluteImageUrl(path)
+  })
 
   useSeoMeta({
     description: () => description.value,
@@ -33,7 +48,7 @@ export function useShareMeta(input: ShareMetaInput = {}): void {
     ogUrl: () => url.value,
     ogType: () => type.value,
     ogSiteName: product.name,
-    ogImage: OG_IMAGE_URL,
+    ogImage: () => image.value,
     ogImageType: 'image/png',
     ogImageWidth: OG_IMAGE_WIDTH,
     ogImageHeight: OG_IMAGE_HEIGHT,
@@ -41,7 +56,7 @@ export function useShareMeta(input: ShareMetaInput = {}): void {
     twitterCard: 'summary_large_image',
     twitterTitle: () => title.value,
     twitterDescription: () => description.value,
-    twitterImage: OG_IMAGE_URL,
+    twitterImage: () => image.value,
     twitterImageAlt: () => title.value,
   })
 

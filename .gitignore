@@ -21,3 +21,5 @@ logs
 node_modules
 temp
 .data
+# Share cards written at generate / dev. Do not commit them.
+public/covers/_card/

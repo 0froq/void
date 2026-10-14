@@ -15,6 +15,7 @@ useHead({ title: () => t('notes.label') })
 useShareMeta({
   title: () => t('notes.label'),
   description: () => t('notes.lede'),
+  cover: () => ({ collection: 'notes', path: contentPath('/notes') }),
 })
 </script>
 

@@ -25,6 +25,7 @@ useHead(() => ({
 useShareMeta({
   title: () => page.value?.title,
   description: () => page.value?.description,
+  cover: () => contentCoverSource('pages', page.value),
 })
 </script>
 
