@@ -153,8 +153,6 @@ function closeWindow(): boolean {
 
 function markDirty(dirty: boolean): void {
   stateEl.dataset.dirty = dirty ? 'true' : 'false'
-  if (stateEl.textContent === 'Saved' && !dirty)
-    return
   stateEl.textContent = dirty ? 'Edited' : ''
 }
 
