@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
+import { countCardWords } from '@froq/og-covers-layer/card-words'
 import { IMAGE_ORIGIN } from './app/utils/site'
-import { countCardWords } from './shared/card-words'
 import { changelogEntryRoutes } from './shared/content-routes'
 import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
@@ -8,22 +8,11 @@ import { listPublicShareImages } from './shared/public-files'
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
-// Faces the stylesheet already loads, or that only exist on the visitor's machine.
-// Listing them stops `@nuxt/fonts` from downloading stand-ins.
-const siteFaces = [
-  'Geist',
-  'Geist Variable',
-  'Geist Mono Variable',
-  'Iowan Old Style',
-  'Georgia',
-  'Songti SC',
-  'Source Han Serif SC',
-  'PingFang SC',
-  'Hiragino Sans GB',
-  'Noto Sans SC',
-] as const
-
 export default defineNuxtConfig({
+  extends: [
+    ['github:0froq/og-layer#v0.1.0', { install: true }],
+  ],
+
   compatibilityDate: '2026-09-19',
 
   hooks: {
@@ -47,11 +36,9 @@ export default defineNuxtConfig({
   build: { transpile: ['@froq/ui'] },
 
   modules: [
-    '@nuxt/fonts',
     '@nuxt/content',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
-    'nuxt-og-image',
     // Dev-only. setup() returns before registering anything when not `nuxt dev`.
     './modules/mini-editor',
   ],
@@ -64,74 +51,6 @@ export default defineNuxtConfig({
   site: {
     url: IMAGE_ORIGIN,
     name: 'void',
-  },
-
-  ogImage: {
-    zeroRuntime: true,
-    defaults: {
-      width: 1200,
-      height: 630,
-      extension: 'png',
-    },
-    // Satori/fontless only. Takumi takes unicode-range slices from `@nuxt/fonts`.
-    fontSubsets: ['latin', 'latin-ext', 'chinese-simplified'],
-    compatibility: {
-      prerender: { browser: false },
-    },
-  },
-
-  fonts: {
-    providers: { google: false },
-    // `--font-*` lists system CJK faces. Scanning them would try to fetch substitutes.
-    processCSSVariables: false,
-    defaults: {
-      weights: [400],
-      styles: ['normal'],
-      preload: false,
-      fallbacks: [],
-    },
-    families: [
-      ...siteFaces.map(name => ({ name, provider: 'none' as const })),
-      {
-        name: 'Instrument Serif',
-        provider: 'fontsource',
-        weights: [400],
-        styles: ['normal', 'italic'],
-        subsets: ['latin', 'latin-ext'],
-        global: true,
-        preload: false,
-      },
-      {
-        // froQ mark only. True italic, not a slanted roman. OFL-1.1.
-        // Notice: `@fontsource/eb-garamond/LICENSE` and `public/fonts/EB-Garamond-OFL.txt`.
-        name: 'EB Garamond',
-        provider: 'fontsource',
-        weights: [400],
-        styles: ['italic'],
-        subsets: ['latin', 'latin-ext'],
-        global: true,
-        preload: false,
-      },
-      {
-        name: 'Geist Mono',
-        provider: 'fontsource',
-        weights: [400],
-        styles: ['normal'],
-        subsets: ['latin', 'latin-ext'],
-        global: true,
-        preload: false,
-      },
-      {
-        name: 'Noto Serif SC',
-        provider: 'fontsource',
-        weights: [400],
-        styles: ['normal'],
-        // Default subsets stop at latin. Han is this named slice.
-        subsets: ['chinese-simplified'],
-        global: true,
-        preload: false,
-      },
-    ],
   },
 
   css: [
