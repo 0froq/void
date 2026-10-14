@@ -1163,7 +1163,7 @@ packages:
     resolution: {integrity: sha512-nIK2HyNGcUi2TGwIfrk2MItkh0O3Y5+TI8iPfPSzoNY6uyXYfQ9qqch8czk3aa1VhV4EU52uwCYCe1UDKJELpg==}
 
   '@froq/og-covers-layer@git+https://github.com/0froq/og-layer.git#661bbc2ed11eaf965993113bd115ab95e2f11971':
-    resolution: {commit: 661bbc2ed11eaf965993113bd115ab95e2f11971, repo: git+https://github.com/0froq/og-layer.git, type: git}
+    resolution: {commit: 661bbc2ed11eaf965993113bd115ab95e2f11971, repo: https://github.com/0froq/og-layer.git, type: git}
     version: 0.1.0
     peerDependencies:
       nuxt: ^4.6.0
