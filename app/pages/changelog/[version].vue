@@ -18,6 +18,7 @@ const override = computed(() => contentOgOverride(release.value, 'changelog', fi
 if (override.value === undefined) {
   defineOgImage(ogComponentName(release.value), {
     title: () => paperFields(release.value).title,
+    description: () => paperFields(release.value, t('site.description')).description,
     evergreen: () => paperFields(release.value).evergreen,
     created: () => paperFields(release.value).created,
     updated: () => paperFields(release.value).updated,

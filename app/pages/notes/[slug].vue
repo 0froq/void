@@ -30,6 +30,7 @@ const override = computed(() => contentOgOverride(note.value, 'notes', files))
 if (override.value === undefined) {
   defineOgImage(ogComponentName(note.value), {
     title: () => paperFields(note.value).title,
+    description: () => paperFields(note.value, t('site.description')).description,
     evergreen: () => paperFields(note.value).evergreen,
     created: () => paperFields(note.value).created,
     updated: () => paperFields(note.value).updated,

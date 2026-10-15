@@ -20,6 +20,7 @@ const override = computed(() => explicitContentCover({
 if (!override.value) {
   defineOgImage('Paper', {
     title: () => t('notes.label'),
+    description: () => t('notes.lede') || t('site.description'),
     words: 0,
   }, {
     alt: () => t('notes.label'),
