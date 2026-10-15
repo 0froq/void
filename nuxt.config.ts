@@ -10,7 +10,7 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineNuxtConfig({
   extends: [
-    ['github:0froq/og-layer#4e198c915fbd94e96fb69f2a434745c83b1e5c9a', { install: true }],
+    ['github:0froq/og-layer#v0.2.0', { install: true }],
   ],
 
   compatibilityDate: '2026-09-19',
@@ -87,7 +87,7 @@ export default defineNuxtConfig({
   i18n: {
     locales: [
       { code: 'en', language: 'en', name: 'English', file: 'en.json' },
-      { code: 'zh', language: 'zh-CN', name: '中文', file: 'zh.json' },
+      { code: 'zh', language: 'zh-CN', name: '\u4e2d\u6587', file: 'zh.json' },
     ],
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
