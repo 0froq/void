@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Any page in content/<locale>/, including the landing (index.md): its blocks are the page
 const route = useRoute()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const contentPath = useContentPath()
 
 const rest = computed(() => {
@@ -27,6 +27,7 @@ const override = computed(() => contentOgOverride(page.value, 'pages', files))
 if (override.value === undefined) {
   defineOgImage(ogComponentName(page.value), {
     title: () => paperFields(page.value).title,
+    description: () => paperFields(page.value, t('site.description')).description,
     evergreen: () => paperFields(page.value).evergreen,
     created: () => paperFields(page.value).created,
     updated: () => paperFields(page.value).updated,
