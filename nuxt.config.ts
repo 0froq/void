@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { countCardWords } from '@froq/og-covers-layer/card-words'
 import { IMAGE_ORIGIN } from './app/utils/site'
@@ -5,6 +6,11 @@ import { changelogEntryRoutes } from './shared/content-routes'
 import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
 import { listPublicShareImages } from './shared/public-files'
+
+// The og-layer extend installs with `corepack pnpm install --ignore-workspace`
+// before hooks run. That install does not read this repo's allowBuilds, and
+// pnpm 12 exits when a dependency build is still unapproved.
+process.env.pnpm_config_strict_dep_builds ??= 'false'
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
