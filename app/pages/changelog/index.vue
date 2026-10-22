@@ -5,23 +5,36 @@ const contentPath = useContentPath()
 
 const { data: releases } = await useAsyncData(
   () => `changelog-${locale.value}`,
-  () => queryCollection('changelog').where('path', 'LIKE', `${contentPath('/changelog')}/%`).order('date', 'DESC').all(),
+  () =>
+    queryCollection('changelog')
+      .where('path', 'LIKE', `${contentPath('/changelog')}/%`)
+      .order('date', 'DESC')
+      .all(),
 )
 
 useHead({ title: () => t('changelog.label') })
 const files = useRuntimeConfig().public.publicFiles
-const override = computed(() => explicitContentCover({
-  collection: 'changelog',
-  path: contentPath('/changelog'),
-}, path => hasShareFile(files, path)))
+const override = computed(() =>
+  explicitContentCover(
+    {
+      collection: 'changelog',
+      path: contentPath('/changelog'),
+    },
+    path => hasShareFile(files, path),
+  ),
+)
 if (!override.value) {
-  defineOgImage('Paper', {
-    title: () => t('changelog.label'),
-    description: () => t('changelog.lede') || t('site.description'),
-    words: 0,
-  }, {
-    alt: () => t('changelog.label'),
-  })
+  defineOgImage(
+    'Paper',
+    {
+      title: () => t('changelog.label'),
+      description: () => t('changelog.lede') || t('site.description'),
+      words: 0,
+    },
+    {
+      alt: () => t('changelog.label'),
+    },
+  )
 }
 useShareMeta({
   title: () => t('changelog.label'),
@@ -57,9 +70,7 @@ useShareMeta({
           :value="release.date"
           name="changelog.date"
           :size="10"
-        /><template v-if="index === 0">
-          · {{ t('changelog.latest') }}
-        </template>
+        /><template v-if="index === 0"> · {{ t('changelog.latest') }} </template>
       </p>
       <h2 class="l-entry-title">
         <Fill

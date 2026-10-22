@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PageSection } from '~/composables/usePageSections'
 
-defineProps<{ sections: PageSection[], current: string }>()
+defineProps<{ sections: PageSection[]; current: string }>()
 const { t } = useI18n()
 </script>
 
@@ -15,6 +15,7 @@ const { t } = useI18n()
       :key="section.id"
       :href="`#${section.id}`"
       :aria-current="section.id === current ? 'true' : undefined"
-    >{{ section.label }}</a>
+      >{{ section.label }}</a
+    >
   </nav>
 </template>
