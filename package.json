@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": "^24.21.0 || >=26.0.0"
+  },
   "description": "A lovingly art-directed product that returns void. Zero side-effects.",
   "scripts": {
     "dev": "nuxt dev",
