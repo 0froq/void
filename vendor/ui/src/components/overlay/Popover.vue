@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PopoverClose, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverAnchor, PopoverClose, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { useSlots, useTemplateRef } from 'vue'
 import { usePortalTarget } from '../../vue'
 
@@ -13,6 +13,7 @@ withDefaults(defineProps<{
   align?: 'start' | 'center' | 'end'
   sideOffset?: number
   portalTo?: string | HTMLElement
+  reference?: HTMLElement
 }>(), { disabled: false, side: 'bottom', align: 'start', sideOffset: 8 })
 defineSlots<{
   trigger?: () => unknown
@@ -33,7 +34,14 @@ function close() {
     class="ui-overlay-scope"
   >
     <PopoverRoot v-model:open="model">
+      <PopoverAnchor
+        v-if="reference"
+        :reference="reference"
+        as="span"
+        hidden
+      />
       <PopoverTrigger
+        v-else
         :as-child="Boolean(slots.trigger)"
         :disabled="disabled"
         class="ui-overlay-trigger"

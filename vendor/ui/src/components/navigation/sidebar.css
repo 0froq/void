@@ -108,7 +108,7 @@
 
 .ui-sidebar-link[aria-current] {
   color: var(--ui-fg);
-  background: color-mix(in srgb, var(--ui-fg) 6%, var(--ui-bg));
+  background: color-mix(in srgb, var(--ui-fg) 6%, transparent);
 }
 
 .ui-sidebar-link[aria-current]::before,
@@ -130,7 +130,7 @@
   top: 0;
   left: 0;
   border-radius: var(--ui-radius);
-  background: color-mix(in srgb, var(--ui-fg) 6%, var(--ui-bg));
+  background: color-mix(in srgb, var(--ui-fg) 6%, transparent);
   pointer-events: none;
   transition:
     transform var(--ui-dur) var(--ui-ease),

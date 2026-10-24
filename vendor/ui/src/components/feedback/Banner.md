@@ -21,7 +21,7 @@ slots:
     description: Optional links or buttons, including router-aware links.
 ---
 
-Banner is a full-width notice placed above a site's header or content, unlike an inline Alert. It stays in normal document flow and wraps naturally; fixed or sticky positioning is caller-owned. It has no timer, storage, routing or `v-model`.
+Banner is a full-width notice placed above a site's header or content, unlike an inline Alert. It stays in normal flow, so it takes its own space, and sticks to the top of the scrollport. It wraps naturally. It has no timer, storage, routing or `v-model`.
 
 The required `label` names a region. This is not the `banner` landmark reserved for the site's header, and it is not an automatic live announcement. Important static notices remain available without repeatedly interrupting assistive technology.
 

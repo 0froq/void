@@ -2,7 +2,9 @@
 @import './components/button/copy-button.css';
 @import './components/button/icon-button.css';
 @import './components/date/date.css';
+@import './components/devtools/devtools.css';
 @import './components/display/display.css';
+@import './components/display/code-block.css';
 @import './components/feedback/skeleton.css';
 @import './components/feedback/feedback.css';
 @import './components/feedback/banner.css';

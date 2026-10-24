@@ -39,7 +39,7 @@ import { Paper } from '@froq/ui'
 `usePaperSignature(root, options)` 的参数：
 
 - `root`：页面元素 ref。页面需要定位及独立层叠上下文，例如 `position: relative; z-index: 0`；笔线画布位于内部 z-index -1，不应裁切。
-- `anchors()`：由调用方提供可选的 `mark`、`rule`、`hand`、`handText`、`finalMark`、`finalSection`、`margin`，以及 `sections`（每项为 `element`、`label`、可选 `price`）。宽度小于 860 px 时跨段抬笔，真实内容尺寸变化后重新读取锚点。
+- `anchors()`：由调用方提供可选的 `mark`、`rule`、`hand`、`handText`、`finalMark`、`finalSection`、`finalBand`（与终止符同高、不含文字的空带，笔从这里横穿而不是沿页边下行）、`margin`，以及 `sections`（每项为 `element`、`label`、可选 `price`）。宽度小于 860 px 时跨段抬笔，真实内容尺寸变化后重新读取锚点。
 - `colors()`：宿主 token 解析后的六位 HEX `{ paper, ink, accent, dark }`。引擎接收已解析的数据，不读项目 CSS 变量。
 - `mixColors(first, weight, second)`：宿主调色函数，weight 是第一种颜色的比例。LiG 继续传原有 OKLab 混色函数，保持原来的墨色。
 - `settings()`：`paper`、`bloom`、`line`、`hand` 默认 true；`dwellAfter` 为秒，默认 0；`click` 默认 false。布局稳定后读取一次，修改设置需重新挂载。

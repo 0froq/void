@@ -1,12 +1,15 @@
 ---
 title: Popover
 designStatus: ai-draft
-description: 锚定在触发按钮上的非模态浮层面板。
+description: 锚定在触发按钮或外部元素上的非模态浮层面板。
 model:
   type: boolean
   default: "false"
   description: 浮层是否打开。
 props:
+  - name: reference
+    type: HTMLElement
+    description: 外部锚点元素，替代内置触发按钮；调用方通过 v-model 控制打开。
   - name: label
     type: string
     required: true
@@ -53,6 +56,10 @@ Popover 是锚定在触发按钮上的非模态面板。trigger 插槽必须最�
 Popover 不是菜单、tooltip 或模态对话框。复杂内容及其业务行为应留在调用方。在调用方引入 `style.css`，并提供 `.ui` 祖先元素，以供库样式和默认 portal 目标使用。
 
 ## 用法
+
+代码片段等由调用方管理的目标可以通过 `reference` 传入 DOM 元素，并通过
+`v-model` 控制浮层；此时不渲染触发按钮。悬停计时和焦点恢复由调用方负责。
+需要让焦点留在目标上时，可以阻止内容的 `open-auto-focus` 和 `close-auto-focus` 事件。
 
 ```vue
 <script setup lang="ts">

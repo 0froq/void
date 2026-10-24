@@ -71,7 +71,7 @@ This is additional planned coverage, not a claim that v1.0 is implemented. Nativ
 | --- | --- | --- |
 | Actions / form | IconButton, ToggleGroup/segmented choice, RadioGroup-compatible Choice, FormField, NumberInput, Slider, Combobox, multi-select, FileUpload | Accessible labels/errors/descriptions, disabled/read-only/required/name, keyboard and controlled values; keep native Select distinct from searchable Combobox |
 | Navigation / disclosure | Tabs, Accordion, Breadcrumb, Pagination | Link-versus-tab distinction; active/focus semantics, IDs and keyboard; no route ownership |
-| Overlay | Dialog, AlertDialog, Drawer, Popover, DropdownMenu, ContextMenu, Tooltip, HoverCard/preview | Escape/outside dismissal policy, focus entry/return/trap where modal, placement/overflow, layering, nested overlays, SSR and cleanup |
+| Overlay | Dialog, AlertDialog, Drawer, Popover, Menu, ContextMenu, Tooltip, HoverCard/preview | Escape/outside dismissal policy, focus entry/return/trap where modal, placement/overflow, layering, nested overlays, SSR and cleanup |
 | Feedback | Alert, Toast, Progress, Spinner, EmptyState | Status/error naming, determinate/indeterminate progress, announcement policy and dismissibility |
 | Data display | Badge, Avatar, Separator, Card, Table, AspectRatio / media loading | Semantic HTML, fallback content and stable image geometry; table cell slots without business schema |
 | Date / time | DateInput and basic DatePicker/Calendar | Locale-aware labels, keyboard, min/max/disabled dates and controlled dates; range/time extensions only when demanded |
@@ -134,7 +134,7 @@ Neither component derives routes, owns requests or moves focus to new page conte
 
 | Component | Implementation | Manual acceptance |
 | --- | --- | --- |
-| DropdownMenu | `overlay`; recursive command items, separator hints, disabled items, cancelable selection, themed submenus, Reka keyboard and focus | Arrow/typeahead/Escape, submenu pointer travel, prevented selection, RTL, modal/nonmodal, theme and custom trigger |
+| Menu | `overlay`; recursive command items, separator hints, disabled items, cancelable selection, themed submenus, Reka keyboard and focus | Arrow/typeahead/Escape, submenu pointer travel, prevented selection, RTL, modal/nonmodal, theme and custom trigger |
 | Tooltip | `overlay`; plain text description over one focusable trigger, delayed pointer opening, controlled state and collision placement | Keyboard focus, hover between trigger/content, Escape, disabled behavior, trigger naming and portal scope |
 
 These wrappers do not implement checkbox/radio menu items, router links, interactive tooltip content or shared timing across Tooltip instances. Consumer actions and trigger names remain outside the wrappers.

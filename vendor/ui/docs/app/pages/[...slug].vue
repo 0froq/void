@@ -16,8 +16,11 @@ const { data: page } = await useAsyncData(
 if (!page.value)
   throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 
-useHead(() => ({ title: page.value?.title || undefined }))
-useSeoMeta({ description: () => page.value?.description })
+useContentOgImage(page, 'pages', {
+  title: () => page.value?.title,
+  description: () => page.value?.description,
+  type: 'article',
+})
 </script>
 
 <template>

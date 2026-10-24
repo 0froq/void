@@ -7,7 +7,10 @@ const { docFor } = await useComponentDocs()
 if (!concept.value)
   throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 
-useHead({ title: () => concept.value?.id })
+usePaperOgImage({
+  title: () => concept.value?.id,
+  description: () => concept.value?.items.map(item => item.name).join(', '),
+})
 </script>
 
 <template>
@@ -23,7 +26,7 @@ useHead({ title: () => concept.value?.id })
           <NuxtLink :to="link(entry.to)">
             {{ entry.name }}
           </NuxtLink>
-          <ComponentStatus />
+          <ComponentStatus :status="docFor(concept.id, entry.name)?.designStatus" />
         </h2>
         <NuxtLink
           class="l-kicker"

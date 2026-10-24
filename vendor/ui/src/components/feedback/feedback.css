@@ -63,7 +63,7 @@
   border: 1px solid var(--ui-line);
   border-inline-start: 3px solid var(--ui-accent);
   border-radius: var(--ui-radius);
-  background: color-mix(in srgb, var(--ui-fg) 3%, var(--ui-bg));
+  background: color-mix(in srgb, var(--ui-fg) 3%, transparent);
   color: var(--ui-fg);
   font-family: var(--ui-font-text);
 }

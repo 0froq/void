@@ -35,7 +35,10 @@ watch(model, (open) => {
 </script>
 
 <template>
-  <div class="ui-collapsible">
+  <div
+    class="ui-collapsible"
+    :class="{ 'is-open': model }"
+  >
     <slot
       name="trigger"
       :open="model"
@@ -57,7 +60,11 @@ watch(model, (open) => {
       :inert="model ? undefined : true"
       :aria-hidden="model ? undefined : true"
     >
-      <slot :open="model" />
+      <div class="ui-collapsible-clip">
+        <div class="ui-collapsible-body">
+          <slot :open="model" />
+        </div>
+      </div>
     </div>
   </div>
 </template>

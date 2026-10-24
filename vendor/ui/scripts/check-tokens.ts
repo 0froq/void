@@ -21,8 +21,13 @@ function checkDirectory(directory: string): void {
       continue
     const content = readFileSync(path, 'utf8')
     const styles = path.endsWith('.css') ? content : [...content.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]).join('\n')
+    // A name the file declares for itself (a private custom property) is not a token read.
+    const declared = new Set([
+      ...styles.matchAll(/(--[\w-]+)\s*:/g),
+      ...styles.matchAll(/@property\s+(--[\w-]+)/g),
+    ].map(match => match[1]!))
     for (const match of styles.matchAll(/var\(\s*(--[\w-]+)/g)) {
-      if (!allowed.has(match[1]!))
+      if (!allowed.has(match[1]!) && !declared.has(match[1]!))
         problems.push(`${path.slice(source.length + 1)}: reads undeclared token ${match[1]}`)
     }
   }

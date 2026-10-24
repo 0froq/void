@@ -7,12 +7,16 @@ export type MixColors = (first: string, weight: number, second: string) => strin
 
 export interface PenAnchors {
   rule?: Element | null
+  /** The head rule spans this text instead of running the width of `rule`. */
+  ruleEnd?: Element | null
   hand?: HTMLElement | null
   /** Text without layout placeholders; defaults to hand.textContent. */
   handText?: string
   sections?: { element: Element, label: Element, price?: Element | null }[]
   finalMark?: HTMLElement | null
   finalSection?: Element | null
+  /** An empty horizontal band level with `finalMark`'s section, spanning its text column. The pen crosses it instead of descending the margin, so a stop inside a text-filled block is reached without crossing words. */
+  finalBand?: Element | null
   margin?: Element | null
 }
 

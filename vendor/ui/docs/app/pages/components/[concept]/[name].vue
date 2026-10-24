@@ -10,8 +10,10 @@ if (!concept.value || !item.value)
 
 const hasApi = computed(() => Boolean(doc.value?.model || doc.value?.props?.length || doc.value?.slots?.length || doc.value?.events?.length))
 
-useHead({ title: () => item.value?.name })
-useSeoMeta({ description: () => doc.value?.description })
+usePaperOgImage({
+  title: () => item.value?.name,
+  description: () => doc.value?.description,
+})
 </script>
 
 <template>
@@ -28,6 +30,7 @@ useSeoMeta({ description: () => doc.value?.description })
       <h1>{{ item.name }}</h1>
       <ComponentStatus
         class="component-design-status"
+        :status="doc?.designStatus"
         explain
       />
       <p v-if="doc?.description">

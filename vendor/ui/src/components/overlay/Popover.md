@@ -1,12 +1,15 @@
 ---
 title: Popover
 designStatus: ai-draft
-description: A non-modal panel anchored to a trigger button.
+description: A non-modal panel anchored to a trigger button or an external element.
 model:
   type: boolean
   default: "false"
   description: Whether the popover is open.
 props:
+  - name: reference
+    type: HTMLElement
+    description: External anchor element. Replaces the built-in trigger; the caller controls opening through v-model.
   - name: label
     type: string
     required: true
@@ -53,6 +56,11 @@ By default, content is teleported into the closest consumer element with `class=
 Popover is not a menu, tooltip, or modal dialog. Keep complex content and its business behavior in the consuming application. Import `style.css` in the caller and provide a `.ui` ancestor for the library styles and default portal target.
 
 ## Usage
+
+For an externally managed target such as a code token, pass its DOM element as
+`reference` and control `v-model`. No trigger button is rendered in this mode.
+The caller owns hover timing and focus restoration; content event listeners can
+prevent `open-auto-focus` and `close-auto-focus` when focus should stay on the target.
 
 ```vue
 <script setup lang="ts">

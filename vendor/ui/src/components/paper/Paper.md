@@ -39,7 +39,7 @@ The framework-free `@froq/ui/core` entry also exports `createInkWash`, `createPe
 `usePaperSignature(root, options)` accepts:
 
 - `root`: a ref to a positioned page element with its own stacking context (for example `position: relative; z-index: 0`). The pen is prepended inside it at z-index -1. Do not clip that canvas: it covers the viewport's document slice.
-- `anchors()`: caller-owned elements: optional `mark`, `rule`, `hand`, `handText`, `finalMark`, `finalSection`, `margin`, and `sections` entries containing `element`, `label`, optional `price`. The route lifts between sections below 860 px. Anchors are read again after a real content resize.
+- `anchors()`: caller-owned elements: optional `mark`, `rule`, `hand`, `handText`, `finalMark`, `finalSection`, `finalBand`, `margin`, and `sections` entries containing `element`, `label`, optional `price`. The route lifts between sections below 860 px. Anchors are read again after a real content resize.
 - `colors()`: resolved six-digit HEX `{ paper, ink, accent, dark }`; derive these from the host's token palette. The core engine takes resolved data, not CSS variables.
 - `mixColors(first, weight, second)`: the host's existing mixer; weight is the first color's share. LiG passes its OKLab mixer so extraction does not change ink tones.
 - `settings()`: optional `paper`, `bloom`, `line`, `hand` (default true), `dwellAfter` (seconds, default 0), and `click` (default false). Settings are read once after layout settles. Remount to change them.

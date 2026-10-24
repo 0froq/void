@@ -26,7 +26,9 @@ Collapsible is a controlled disclosure: `v-model` is a boolean, and the default 
 
 The `disabled` prop prevents user toggles; it does not prevent a parent from changing the model. If you provide a trigger slot, bind its complete `props` object to the real button to preserve its generated `id`, `type`, `disabled`, ARIA attributes, class, and click handler. The panel's generated ID is connected to that trigger through `aria-controls`.
 
-Collapsible does not animate panel height; only the chevron rotates, and reduced-motion preferences disable that transition. It does not implement Accordion or automatic group behavior. Content and any business state remain the consumer's responsibility.
+While the panel is open, its trigger is `position: sticky` at `top: 0` and stays pinned until the panel ends, like a scope header in a code editor, and a short fade under it lets the content slide away. It needs no scroll container of its own, but no ancestor may clip it with `overflow: hidden`, `auto`, or `scroll` (use `overflow: clip` instead). If the host has a fixed bar at the top, override `top` on `.ui-collapsible.is-open > .ui-collapsible-trigger` with the bar's height.
+
+The built-in trigger places a hairline after the label. Hover grows an accent fade across it; open and keyboard focus settle that line into the accent. The panel height eases open and closed while the content stays mounted. Reduced-motion preferences disable the line, chevron, and height transitions. It does not implement Accordion or automatic group behavior. Content and any business state remain the consumer's responsibility.
 
 ## Usage
 

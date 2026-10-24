@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { defineCollection, defineContentConfig, z } from '@nuxt/content'
+import { defineOgImageSchema } from 'nuxt-og-image/content'
 
 const field = z.object({
   name: z.string(),
@@ -8,6 +9,18 @@ const field = z.object({
   default: z.string().optional(),
   description: z.string(),
 })
+
+// Optional frontmatter `cover`: a `public/` path or an absolute https URL. It wins over `ogImage.url`.
+const card = {
+  cover: z.string().optional(),
+  ogImage: defineOgImageSchema({ z }),
+  words: z.number().optional(),
+  evergreen: z.boolean().optional(),
+  kind: z.string().optional(),
+  created: z.string().optional(),
+  updated: z.string().optional(),
+  last_modified: z.string().optional(),
+}
 
 // Every file lives under a locale folder (`zh/`, `en/`), so paths start with `/zh`, `/en`.
 export default defineContentConfig({
@@ -21,6 +34,8 @@ export default defineContentConfig({
       schema: z.object({
         kicker: z.string().optional(),
         head: z.boolean().default(true),
+        date: z.string().optional(),
+        ...card,
       }),
     }),
     changelog: defineCollection({
@@ -29,6 +44,7 @@ export default defineContentConfig({
       schema: z.object({
         version: z.string(),
         date: z.string(),
+        ...card,
       }),
     }),
     // Numeric prefixes (`1.install.md`) order the sidebar and are dropped from the path.
@@ -37,6 +53,8 @@ export default defineContentConfig({
       source: '*/docs/**/*.md',
       schema: z.object({
         kicker: z.string().optional(),
+        date: z.string().optional(),
+        ...card,
       }),
     }),
     // `Name.md` is English. `Name.zh.md` is Chinese. Both sit next to the component.
@@ -47,7 +65,7 @@ export default defineContentConfig({
         include: '**/*.md',
       },
       schema: z.object({
-        designStatus: z.literal('ai-draft').default('ai-draft'),
+        designStatus: z.enum(['ai-draft', 'reviewed', 'stable']).default('ai-draft'),
         model: field.omit({ name: true }).optional(),
         props: z.array(field).default([]),
         slots: z.array(field.omit({ type: true, required: true, default: true })).default([]),
@@ -56,6 +74,7 @@ export default defineContentConfig({
           payload: z.string(),
           description: z.string(),
         })).default([]),
+        ...card,
       }),
     }),
   },

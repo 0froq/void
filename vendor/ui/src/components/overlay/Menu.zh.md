@@ -1,6 +1,6 @@
 ---
-title: DropdownMenu
-designStatus: ai-draft
+title: Menu
+designStatus: reviewed
 description: 支持嵌套子菜单的无障碍菜单。
 model:
   type: boolean
@@ -52,7 +52,7 @@ slots:
     description: 替换菜单项的标签内容并接收 item。内容需保持非交互，不要添加交互子元素。
 ---
 
-DropdownMenu 是支持嵌套子菜单的无障碍菜单。trigger 插槽必须最终渲染为单个真实按钮；若使用按钮组件，它必须转发 primitive 提供的属性和事件。未提供该插槽时，触发按钮使用 `label` 文案。`disabled` 只作用于触发按钮。
+Menu 是支持嵌套子菜单的无障碍菜单。trigger 插槽必须最终渲染为单个真实按钮；若使用按钮组件，它必须转发 primitive 提供的属性和事件。未提供该插槽时，触发按钮使用 `label` 文案。`disabled` 只作用于触发按钮。
 
 `items` 使用共享 `MenuItem` 结构：`{ value, label, disabled?, separatorBefore?, children? }`。同级菜单项的 `value` 需唯一。非空的 `children` 数组会使该项成为子菜单触发项，本身不能被选中；省略或为空的 `children` 数组表示可选择的叶子项。`separatorBefore` 会在该项前添加分隔线，但同级列表首项前不会添加。`item` 插槽接收 `{ item }`，只替换标签内容。请不要在其中放按钮、链接或其他交互后代，以免破坏菜单的键盘交互。
 
@@ -62,12 +62,16 @@ DropdownMenu 是支持嵌套子菜单的无障碍菜单。trigger 插槽必须�
 
 默认情况下，内容会 Teleport 到最近的消费者 `class="ui"` 元素；找不到时则以内联方式渲染。在服务端只渲染触发按钮，打开后才会在客户端显示菜单内容。自定义 `portalTo` 目标必须已经存在，并由消费者提供主题和 UI token。本库的 token 契约不包含 Reka UI CSS 变量。在调用方引入 `style.css`，并提供 `.ui` 祖先元素，以供库样式和默认 portal 目标使用。
 
+## 表面
+
+列表是 `--ui-line` 的细线、圆角 0、没有阴影。高亮行是下划线，没有填充，也没有 accent 竖条。行的起始侧留出槽位。在项内容上标记 `aria-current="page"` 时，槽位里出现 5px 的 accent 圆点。字是 11px 的 `--ui-font-meta`。Select 的列表用同一套。见[语言](/docs/language)。
+
 ## 用法
 
 ```vue
 <script setup lang="ts">
 import type { MenuItem } from '@froq/ui/vue'
-import { Button, DropdownMenu } from '@froq/ui'
+import { Button, Menu } from '@froq/ui'
 import { ref } from 'vue'
 import '@froq/ui/style.css'
 
@@ -94,7 +98,7 @@ function selectItem(item: MenuItem, event: Event) {
 
 <template>
   <div class="ui">
-    <DropdownMenu
+    <Menu
       v-model="open"
       label="文档操作"
       :items="items"
@@ -103,7 +107,7 @@ function selectItem(item: MenuItem, event: Event) {
       <template #trigger>
         <Button>文档操作</Button>
       </template>
-    </DropdownMenu>
+    </Menu>
   </div>
 </template>
 ```

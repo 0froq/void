@@ -1,6 +1,10 @@
 import { readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { componentFile } from './shared/component-files'
+import { countCardWords } from '@froq/og-covers-layer/card-words'
+import { componentFile } from './app/utils/component-files'
+import { keepEmptyTitle } from './app/utils/empty-title'
+import { listPublicShareImages } from './app/utils/public-files'
+import { IMAGE_ORIGIN, SITE_DESCRIPTION, SITE_NAME } from './app/utils/site'
 
 const siteDist = fileURLToPath(new URL('../dist', import.meta.url))
 const componentsRoot = fileURLToPath(new URL('../src/components', import.meta.url))
@@ -23,13 +27,39 @@ function componentRoutes(): string[] {
 }
 
 export default defineNuxtConfig({
+  extends: [
+    ['github:0froq/og-layer#v0.2.1', { install: true }],
+  ],
+
   compatibilityDate: '2026-09-19',
+
+  hooks: {
+    'content:file:afterParse': ({ file, content }) => {
+      keepEmptyTitle(content, file.body)
+      if (typeof file.body === 'string')
+        (content as { words?: number }).words = countCardWords(file.body)
+    },
+  },
+
+  runtimeConfig: {
+    public: {
+      publicFiles: listPublicShareImages(),
+    },
+  },
 
   modules: [
     '@nuxt/content',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
   ],
+
+  devtools: { enabled: true },
+
+  // `og:image` is absolute on this origin. `og:url` stays on ui.froq.me via useShareMeta.
+  site: {
+    url: IMAGE_ORIGIN,
+    name: SITE_NAME,
+  },
 
   css: [
     '~/assets/css/fonts.css',
@@ -41,7 +71,10 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       link: [{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
-      meta: [{ name: 'color-scheme', content: 'light dark' }],
+      meta: [
+        { name: 'color-scheme', content: 'light dark' },
+        { name: 'description', content: SITE_DESCRIPTION },
+      ],
       script: [{
         tagPosition: 'head',
         innerHTML: `try{var t=localStorage.getItem('ui-theme');var dark=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.dataset.theme=dark?'dark':'light';document.documentElement.classList.toggle('dark',dark)}catch(e){}`,
@@ -79,10 +112,12 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     strategy: 'prefix_except_default',
     detectBrowserLanguage: false,
+    baseUrl: IMAGE_ORIGIN,
   },
 
   nitro: {
-    preset: 'cloudflare-pages-static',
+    // Workers Builds sets WORKERS_CI; without this Nitro picks cloudflare-module.
+    preset: 'static',
     prerender: {
       crawlLinks: true,
       routes: [
@@ -97,7 +132,7 @@ export default defineNuxtConfig({
 
   $production: {
     nitro: {
-      // Cloudflare Pages serves `dist`; dev must not empty that production output.
+      // Workers static assets read repo-root `dist`; dev must not empty that output.
       output: {
         dir: siteDist,
         publicDir: siteDist,
