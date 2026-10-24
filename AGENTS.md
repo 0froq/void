@@ -1,5 +1,70 @@
-<!-- froq-ui -->
+# 把 @froq/ui 嵌进当前项目
 
+你在另一个项目里工作。用户要这个项目使用 froq 的 UI 库。按本文件做。库的仓库是 https://github.com/0froq/ui ，本文件在仓库根目录。
+
+做完之后要同时满足这两件事：
+
+- 当前项目的 `vendor/ui/` 里是这份库的完整源码，并且已经提交在当前项目里。依赖用 file 协议指向 `vendor/ui`。本地 dev 和远端构建都编译这次提交里的这些文件。
+- 当前项目自己的 agent markdown 里写有「推送到上游」「拉取上游」和「把项目里的组件抽进库」。以后用户在这个项目里说「推到上游」「跟上 UI 上游」或「把这个组件抽进 UI 库」，只读该项目的 agent markdown 就能做。抽组件时，拿不准分层、粒度和风格要先问用户；做完要说明放在哪、props 是什么。不必再打开本文件，但写库代码时要读 `vendor/ui/AGENTS.md` 的「代码规范」。
+
+## 禁止
+
+- 不要 `pnpm add github:0froq/ui`，不要锁 tag，不要发 npm。
+- 不要 `pnpm link`，不要 `UI_LOCAL`，不要把 `@froq/ui` alias 到本项目以外的目录。
+- 不要用 git submodule。不要在 `vendor/ui` 里执行 `git init`、`git commit` 或 `git push`。
+- 不要把库挪进 `packages/ui`。不要把 `vendor/ui` 写进当前项目的 `pnpm-workspace.yaml`。
+- 当前项目已有的页面和组件保持不动，除非用户要你换成这个库里的组件，或要你把某个组件抽进库。
+
+`vendor/ui` 是当前项目里的普通目录，提交记在当前项目上。
+
+## 安装
+
+在当前项目的根目录操作。
+
+1. 确认这是一个 git 仓库。`git status` 必须是干净的。不干净就停下来，不要 stash。
+2. `vendor/ui` 已经存在就不要再 `subtree add`。转到「已经嵌过」。
+3. 把库放进项目并提交。这条命令自己会产生提交：
+
+```bash
+git subtree add --prefix=vendor/ui https://github.com/0froq/ui.git main --squash
+```
+
+仓库是公开的，用这个 https 地址，不需要 token。
+
+4. 加上依赖。项目用 pnpm 时：
+
+```bash
+pnpm add ./vendor/ui
+```
+
+保持包管理器写进 `package.json` 的那一行。它必须是 file 协议，指向 `vendor/ui`，例如 `"@froq/ui": "file:vendor/ui"`。项目用别的包管理器时，用那个管理器的 `file:` 依赖，不要把项目改成 pnpm。
+
+5. 当前项目是 Nuxt 时，在 `nuxt.config` 里加上 `build: { transpile: ['@froq/ui'] }`。页面要用组件时，把 `@froq/ui/style.css` 放进 `css`。没有页面要用，就不要加进全局 `css`。Vite 项目直接编译 `vendor/ui` 里的 `.vue`，不要加 alias，也不要加 `server.fs.allow`。
+6. 当前项目的 eslint 如果会检查全部文件，把 `vendor/ui/**` 加进 ignore。不要用当前项目的格式规则去改库里已有的源码。
+7. 按下一节，把同步和抽组件的步骤写进当前项目的 agent markdown。
+8. 提交这次安装剩下的文件：`package.json`、锁文件、`nuxt.config`、eslint 配置、agent markdown。`subtree add` 已经提交过 `vendor/ui` 本身，不要把无关改动放进这次提交。
+
+### 引用
+
+```ts
+import '@froq/ui/style.css'
+import { Choice, Toggle } from '@froq/ui'
+```
+
+包名 `@froq/ui`。导出有 `.`、`./core`、`./vue`，以及 `./style.css` 和 `./tokens.css`。作用域类是 `ui`。字体不在包里。组件用 Instrument Serif、Geist、Geist Mono，由当前项目自己引入。组件放在带 `class="ui"` 的元素里。
+
+## 写进当前项目的 agent markdown
+
+查找顺序：`AGENTS.md`、`AGENT.md`、`CLAUDE.md`。找到的第一份就是要改的文件。一份都没有就新建根目录的 `AGENTS.md`。只改这一份。
+
+文件里已有 `<!-- froq-ui -->` 时，用下面这一整段替换从该标记到 `<!-- /froq-ui -->` 的内容（含两端标记）。没有就追加到文件末尾。
+
+把下面围栏里的正文原样写入，不要改命令、路径和仓库地址。
+
+用户要求抽组件、推上游或拉上游，而当前项目的 agent markdown 里还没有这一段时，先写入并提交这一段，再按其中对应的小节做。
+
+~~~~markdown
+<!-- froq-ui -->
 ## @froq/ui
 
 本项目的 UI 库源码在 `vendor/ui`。这是本仓库里的普通目录，不是 submodule，目录里没有自己的 git。所有 git 命令都在本项目根目录执行，不要进入 `vendor/ui`。依赖用 file 协议指向 `vendor/ui`，包名是 `@froq/ui`。
@@ -89,5 +154,33 @@ git subtree pull --prefix=vendor/ui https://github.com/0froq/ui.git main --squas
 - 库组件的样式里没有本项目的类名和色值。
 - 本项目通过 `@froq/ui` 使用它，不再引用旧文件。
 - 改动在本项目的 git 历史里，还没有进入 https://github.com/0froq/ui ，除非用户另外要求推到上游。
-
 <!-- /froq-ui -->
+~~~~
+
+## 代码规范
+
+抽进库的代码要符合这一节。移植前先读这里，再对照同一层已有文件。
+
+eslint 使用 `@antfu/eslint-config`。Vue 单行和多行都是每个属性单独一行。改完在库仓库里跑 `pnpm lint`，或在项目里对 `vendor/ui` 跑同一套配置。不要为了迁就项目原来的格式去关规则。
+
+### 细则
+
+维护者把具体写法写在这里。这一节还没有细则时，以同一目录里已有组件为准。
+
+## 已经嵌过
+
+不要再执行 `subtree add`。确认依赖仍用 file 协议指向 `vendor/ui`。如果还是 git 地址、tag 或 `link:`，改成 file 协议并更新锁文件。然后按上一节把同步和抽组件的步骤写进或更新到当前项目的 agent markdown，并提交这次改动。
+
+## 在当前项目里改库
+
+改 `vendor/ui/src/...`，在当前项目根目录提交并推送。不要主动执行 `subtree push`，除非用户明确要求推到上游。用户这么要求时，按该项目 agent markdown 里「推送到上游」做。用户要求把项目里的组件抽进库时，按该项目 agent markdown 里「把项目里的组件抽进库」做。
+
+## 核对
+
+- `vendor/ui/package.json` 的 `name` 是 `@froq/ui`。
+- 当前项目的依赖用 file 协议指向 `vendor/ui`。
+- `vendor/ui` 已经出现在当前项目的 git 历史里。
+- 没有 `.gitmodules` 记录这份库。
+- 配置里没有 `UI_LOCAL`。
+- 当前项目的 agent markdown 含有 `<!-- froq-ui -->`，其中有 `git subtree push --prefix=vendor/ui https://github.com/0froq/ui.git main`、`git subtree pull --prefix=vendor/ui https://github.com/0froq/ui.git main --squash`，以及「把项目里的组件抽进库」。
+- `git -C vendor/ui status` 会失败，因为那里不是一个 git 仓库。

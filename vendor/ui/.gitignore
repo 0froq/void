@@ -1,8 +1,0 @@
-node_modules
-dist
-.nuxt
-.output
-.data
-.eslintcache
-*.log
-.DS_Store

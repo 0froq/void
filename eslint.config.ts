@@ -1,25 +1,27 @@
 import antfu from '@antfu/eslint-config'
-import nuxt from './.nuxt/eslint.config.mjs'
 
-export default antfu(
-  {
-    // Markdown formatters rewrite MDC's `---` prop blocks into setext headings
-    ignores: ['content/**', 'README.md', 'vendor/ui/**'],
-    pnpm: true,
-    typescript: true,
-    vue: true,
-    rules: {
-      'vue/max-attributes-per-line': ['error', {
-        singleline: { max: 1 },
-        multiline: { max: 1 },
-      }],
-      'unused-imports/no-unused-imports': 'off',
-    },
-    formatters: {
-      css: true,
-      html: true,
-      markdown: 'dprint',
-    },
+export default antfu({
+  ignores: ['README.md', 'AGENTS.md', 'docs/**', 'dist/**'],
+  pnpm: true,
+  typescript: true,
+  vue: true,
+  rules: {
+    'vue/max-attributes-per-line': ['error', {
+      singleline: { max: 1 },
+      multiline: { max: 1 },
+    }],
+    'unused-imports/no-unused-imports': 'off',
   },
-)
-  .append(nuxt())
+  formatters: {
+    css: true,
+    html: true,
+    markdown: 'dprint',
+  },
+}, {
+  files: ['package.json'],
+  rules: {
+    // file: consumers cannot resolve this workspace's runtime catalog protocols.
+    // Keep runtime dependencies portable; catalog enforcement still covers dev tools.
+    'pnpm/json-enforce-catalog': ['error', { fields: ['devDependencies'] }],
+  },
+})
