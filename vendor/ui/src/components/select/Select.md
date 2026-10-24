@@ -1,12 +1,36 @@
 ---
 title: Select
-designStatus: ai-draft
-description: A labeled native select for choosing one option.
+designStatus: reviewed
+description: A single-value select with native and custom presentations.
 model:
   type: string
   required: true
   description: The value of the selected option.
 props:
+  - name: native
+    type: boolean
+    default: "true"
+    description: Use the native select; false enables the compact custom listbox.
+  - name: hideLabel
+    type: boolean
+    default: "false"
+    description: Hide the visible label while retaining an accessible name.
+  - name: accent
+    type: string
+    description: Optional CSS color overriding --ui-accent within this control.
+  - name: align
+    type: start | center | end
+    default: start
+    description: Alignment of the custom dropdown relative to its trigger.
+  - name: disabled
+    type: boolean
+    description: Disable the control in either mode.
+  - name: required
+    type: boolean
+    description: Require a value when used in a form.
+  - name: name
+    type: string
+    description: Form field name in either mode.
   - name: framed
     type: boolean
     default: "false"
@@ -18,10 +42,10 @@ props:
   - name: options
     type: ChoiceOption[]
     required: true
-    description: Options with a string value and display label; disabled options map to native disabled options.
+    description: Options with a string value, display label, and optional disabled state.
 ---
 
-Select renders a labeled native select with one option selected at a time. Pass each option as an object with `value` and `label`, and bind the selected value with `v-model`. Undeclared attributes such as `id`, `name`, `disabled`, `required`, ARIA attributes, and event listeners are applied to the inner select. `class` and `style` are applied to the outer label. This is a single-value select: it does not support `multiple` or an additional `value` attribute; use `v-model` for the selected value.
+Select defaults to the native control for backward compatibility. Set `:native="false"` for a custom accessible combobox/listbox. Pass options as `{ value, label, disabled? }` and bind a string with `v-model`. `disabled`, `required`, and `name` work in both modes. Other attributes and event listeners go to the native select or custom trigger; `class` and `style` go to the outer container. This is single-value only; use `v-model`, not `value` or `multiple`.
 
 ## Usage
 
@@ -51,3 +75,20 @@ const tone = ref('plain')
 ## Presentation
 
 The native control has a shared chevron inset 12 px from the right; 34 px of control padding reserves space for it. The chevron ignores pointer events, so native mouse, keyboard, touch and assistive-technology behavior remains on the select. Set optional `framed` (boolean, default false) for a full outline and token background; the framed control inherits its host font. The default keeps the understated underline. Both presentations read only the existing UI token contract.
+
+The custom trigger is borderless unless `framed` is set. Its list matches Menu: a hairline (`--ui-line`), radius 0, no shadow, and 11px `--ui-font-meta`. A highlighted row is underlined, with no fill and no accent bar. The checked row keeps `--ui-fg` text and a 5px accent dot in the start gutter. Selection is independent of disabled state. Arrow keys, typeahead, Enter/Space, Escape, and outside dismissal are handled by Reka UI. The dropdown stays inside the control's token scope, including when portaled. Reduced-motion preferences disable the trigger's color transition. See [Language](/docs/language).
+
+```vue
+<Select
+  v-model="tone"
+  :native="false"
+  :options="options"
+  label="Tone"
+  hide-label
+  accent="oklch(65% 0.16 145)"
+/>
+```
+
+`accent` is assigned directly to `--ui-accent`: HEX (including alpha), named colors, `rgb()`, `hsl()`, `oklch()`, `color(display-p3 ...)`, and `var(--brand-color)` work when supported by the browser. There is no HEX-only parsing or JavaScript conversion. Omit it to inherit the consumer's accent. Choose an accent with sufficient contrast against `--ui-bg`; this API does not automatically adjust contrast or opacity.
+
+The custom-only `option` slot receives `{ option }` to decorate option text (for example its `lang` attribute). Keep `option.label` as the plain-text name used for keyboard search and the selected value. No trigger slot is needed for the standard presentation.

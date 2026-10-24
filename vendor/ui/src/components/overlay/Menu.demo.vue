@@ -2,7 +2,7 @@
 import type { MenuItem } from '../../vue'
 import { ref } from 'vue'
 import Button from '../button/Button.vue'
-import DropdownMenu from './DropdownMenu.vue'
+import Menu from './Menu.vue'
 
 const items: MenuItem[] = [
   { value: 'rename', label: 'Rename' },
@@ -18,7 +18,7 @@ const selected = ref('No command selected')
 
 <template>
   <div>
-    <DropdownMenu
+    <Menu
       label="Document actions"
       :items="items"
       @select="item => selected = item.label"
@@ -26,7 +26,7 @@ const selected = ref('No command selected')
       <template #trigger>
         <Button>Document actions</Button>
       </template>
-    </DropdownMenu>
+    </Menu>
     <p aria-live="polite">
       {{ selected }}
     </p>

@@ -1,6 +1,7 @@
 // Stroke: the whole page is one sentence written with a single pen line.
 // It handwrites the tagline (if the page has one), rules off the page head, threads through
 // the empty label column, circles the price and ends on the final full stop.
+// A narrow page has no margin, so a written tagline is the whole sentence.
 // The caller supplies semantic anchor elements; content determines the route.
 
 import type { InkMark, LayerColors, PenLayer, PenOptions, Point } from './types'
@@ -14,6 +15,7 @@ interface Seg {
   to: number
   speed: number
   trigger: Element | null
+  scroll: boolean
 }
 
 interface Dot {
@@ -29,6 +31,8 @@ interface TravelOpts {
   nib?: boolean
   /** Travel connects the intentional marks without competing with them. */
   emphasis?: boolean
+  /** Reveal a connector only as its points enter the reading area. */
+  scroll?: boolean
 }
 
 function smoothstep(a: number, b: number, x: number): number {
@@ -120,11 +124,12 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
     const draft: (Seg | null)[] = []
     let pen: Point | null = null
     let dir: Point = [1, 0]
+    dot = null
     let sized = false
     const tremble = (pts: Point[], amp: number, seed: number): Point[] => options.tremor === false ? pts : wobble(pts, amp, seed)
 
     const append = (poly: Point[], w: number, opts: TravelOpts): Seg => {
-      const { speed, trigger = null, taper = false, nib = false, emphasis = true } = opts
+      const { speed, trigger = null, taper = false, nib = false, emphasis = true, scroll = false } = opts
       const joined = pen ? (options.roundJoins === false ? poly : roundJoin(pen, dir, poly)) : poly
       const r = resample(joined)
       const from = pts.length
@@ -146,7 +151,7 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
       })
       pen = r[r.length - 1] ?? pen
       dir = tangent(r, true)
-      return { from, to: pts.length - 1, speed, trigger }
+      return { from, to: pts.length - 1, speed, trigger, scroll }
     }
     // Before anything is drawn the first travel just puts the pen down
     const travel = (to: Point, entry: Point, w?: number, opts?: TravelOpts): Seg | null => {
@@ -156,7 +161,7 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
         return null
       }
       const d = Math.hypot(to[0] - pen[0], to[1] - pen[1])
-      return append(tremble(cubic(pen, dir, to, entry, Math.max(20, Math.round(d / 6))), Math.min(6, d * 0.012), to[1] * 0.01), w ?? 0, { ...opts, speed: opts?.speed ?? 0, emphasis: false })
+      return append(tremble(cubic(pen, dir, to, entry, Math.max(20, Math.round(d / 6))), Math.min(6, d * 0.012), to[1] * 0.01), w ?? 0, { ...opts, speed: opts?.speed ?? 0, emphasis: false, scroll: !!opts?.trigger })
     }
 
     // Latin ink fitted to a box. `lifted` starts a new mark instead of joining the route.
@@ -221,19 +226,36 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
       writeLatin(text, rect.left, baseline(hand), rect.width, null, false)
     }
     const connector = 1.2 / wordWidth
-    // Single-column layouts have no margin to run in, so the pen lifts between sections
+    // Single-column layouts have no margin to run in. A written tagline ends the stroke;
+    // otherwise the pen still lifts between sections.
     const narrow = window.innerWidth < 860
     const lift = (to: Point, trigger: Element): Seg | null => pen ? append([pen, to], 0, { speed: 1e6, trigger }) : travel(to, [1, 0])
 
     // A tagline can be the whole stroke. The route below is the rest of the page.
-    if (options.continuePastHand !== false || !hand) {
-      // 2. The rule under the head of the page, drawn right to left
+    if (!(narrow && hand) && (options.continuePastHand !== false || !hand)) {
+      // 2. The rule under the head of the page, drawn right to left.
+      // Stop to the right of the first label, leaving room for the leftward
+      // tangent to turn down without swinging out to the page edge.
       const foot = anchors.rule
       if (foot) {
         const fr = foot.getBoundingClientRect()
         const y = fr.top + window.scrollY
-        draft.push(travel([fr.right, y], [-0.45, 0.9], connector, { speed: 1100 }))
-        draft.push(append(tremble([[fr.right, y], [fr.left, y]], 1.2, 3), connector * 0.8, { speed: 1800, emphasis: false }))
+        const end = anchors.ruleEnd ? textRect(anchors.ruleEnd) : null
+        let x0 = fr.right
+        let x1 = fr.left
+        if (end) {
+          x0 = end.right
+          x1 = end.left
+        }
+        else {
+          const firstLabel = !narrow ? anchors.sections?.find(section => section.label)?.label : undefined
+          if (firstLabel) {
+            const lr = textRect(firstLabel)
+            x1 = Math.min(fr.right - 32, Math.max(fr.left + 32, lr.right + 32))
+          }
+        }
+        draft.push(travel([x0, y], [-0.45, 0.9], connector, { speed: 1100 }))
+        draft.push(append(tremble([[x0, y], [x1, y]], 1.2, 3), connector * 0.8, { speed: 1800, emphasis: false }))
       }
 
       // 3. Mark each section name; prices get their own ring.
@@ -285,7 +307,7 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
       const section = anchors.finalSection ?? null
       const parent = mark?.parentElement ?? null
       const measure = mark ? document.createElement('canvas').getContext('2d') : null
-      const glyphText = mark?.firstChild?.textContent
+      const glyphText = mark?.textContent
       if (mark && section && parent && measure && glyphText != null) {
         const style = getComputedStyle(mark)
         measure.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
@@ -301,16 +323,42 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
         const bandY = (prev ? (prev.bottom + top) / 2 : top) + window.scrollY
         const title = textRect(parent)
         const left = anchors.margin?.getBoundingClientRect().left ?? 40
-        const over: Point = [Math.min(window.innerWidth - 40, c[0] + title.height * 1.1), title.top + window.scrollY - title.height * 0.9]
-        if (narrow) {
-          draft.push(lift(over, section))
-          dir = [0.86, 0.5]
+        // A caller-owned empty band beside the stop: run down the gutter outside the text,
+        // cross the band, and drop onto the stop from its right.
+        const band = anchors.finalBand?.getBoundingClientRect()
+        const over: Point = band
+          ? [Math.min(window.innerWidth - 24, c[0] + title.height * 0.3), band.top + band.height / 2 + window.scrollY]
+          : [Math.min(window.innerWidth - 40, c[0] + title.height * 1.1), title.top + window.scrollY - title.height * 0.9]
+        if (band) {
+          // Right along the band, straight down past the stop, then left into it:
+          // three square-ish turns with a radius no larger than the stop's gap to the edge.
+          const gap = Math.max(12, Math.min(over[0] - c[0], (c[1] - over[1]) / 2.5))
+          const turn: Point = [over[0] - gap, over[1]]
+          if (narrow) {
+            draft.push(lift(turn, section))
+            dir = [1, 0]
+          }
+          else {
+            const laneX = Math.max(12, band.left - 28)
+            draft.push(travel([laneX, top + window.scrollY + 24], [0, 1], connector, { speed: 1500, trigger: section }))
+            draft.push(travel([laneX, over[1]], [0.2, 0.98], connector, { speed: 1500, trigger: section }))
+            draft.push(travel(turn, [1, 0], connector, { speed: 1500, trigger: section }))
+          }
+          draft.push(travel([over[0], over[1] + gap], [0, 1], connector, { speed: 1100, trigger: mark }))
+          draft.push(travel([over[0], c[1] - gap], [0, 1], connector, { speed: 1500, trigger: mark }))
+          draft.push(travel(c, [-1, 0], connector, { speed: 1100, trigger: mark }))
         }
         else {
-          draft.push(travel([left + 24, bandY], [0.2, 0.98], connector, { speed: 1500, trigger: section }))
-          draft.push(travel(over, [0.86, 0.5], connector, { speed: 1500, trigger: section }))
+          if (narrow) {
+            draft.push(lift(over, section))
+            dir = [0.86, 0.5]
+          }
+          else {
+            draft.push(travel([left + 24, bandY], [0.2, 0.98], connector, { speed: 1500, trigger: section }))
+            draft.push(travel(over, [0.86, 0.5], connector, { speed: 1500, trigger: section }))
+          }
+          draft.push(travel(c, [-0.42, 0.91], connector, { speed: 1100, trigger: mark }))
         }
-        draft.push(travel(c, [-0.42, 0.91], connector, { speed: 1100, trigger: mark }))
         dot = { x: c[0], y: c[1], r }
       }
     }
@@ -394,6 +442,7 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
 
   let last = performance.now()
   let started = 0
+  let revealEdge = window.scrollY + window.innerHeight * 0.8
 
   function triggered(seg: Seg): boolean {
     return !seg.trigger || seg.trigger.getBoundingClientRect().top < window.innerHeight * 0.8
@@ -409,10 +458,17 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
       }
       return
     }
+    // Let the reading boundary trail the scroll, then settle without overshoot.
+    // At the very bottom nothing more can scroll into view, so the whole viewport counts as read.
+    const atBottom = document.documentElement.scrollHeight - window.innerHeight - window.scrollY < 2
+    const readingEdge = window.scrollY + window.innerHeight * (atBottom ? 1 : 0.8)
+    revealEdge += (readingEdge - revealEdge) * (1 - Math.exp(-dt / 0.22))
+    if (Math.abs(readingEdge - revealEdge) < 0.5)
+      revealEdge = readingEdge
     let budget = dt
     while (segIndex < segs.length && budget > 0) {
       const seg = segs[segIndex]
-      if (!seg || !triggered(seg))
+      if (!seg || (!seg.scroll && !triggered(seg)))
         break
       // If the reader has run ahead, the pen hurries to catch up
       let ahead = 0
@@ -421,17 +477,32 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
           ahead++
       }
       const rate = (seg.speed / STEP) * (1 + ahead * 0.6)
-      const need = (seg.to - head) / rate
-      if (need <= budget) {
-        head = seg.to
-        budget -= need
+      let target = Math.min(seg.to, head + rate * budget)
+      if (seg.scroll) {
+        const edge = revealEdge
+        // Stop at the first crossing, including a fractional sample, so bends
+        // cannot reveal an unseen stretch just because their endpoint is visible.
+        for (let i = Math.floor(head) + 1; i <= Math.ceil(target); i++) {
+          const y = Y[i]!
+          if (y <= edge)
+            continue
+          const before = Y[i - 1]!
+          const crossing = before < edge ? i - 1 + (edge - before) / (y - before) : head
+          target = Math.max(head, Math.min(target, crossing))
+          break
+        }
+      }
+      if (target <= head)
+        break
+      budget -= (target - head) / rate
+      head = target
+      dirty = true
+      if (head >= seg.to) {
         segIndex++
       }
       else {
-        head += rate * budget
-        budget = 0
+        break
       }
-      dirty = true
     }
     if (segIndex >= segs.length && dot && !dotBorn)
       arrive(performance.now())
@@ -546,7 +617,7 @@ export function createPenStroke(options: PenOptions): PenLayer | null {
       ctx.lineWidth = wordWidth * (Wd[upto] ?? 0)
       ctx.stroke()
       const current = segs[segIndex]
-      if (head > 0 && segIndex < segs.length && current && triggered(current)) {
+      if (head > 0 && segIndex < segs.length && current && (current.scroll || triggered(current))) {
         ctx.fillStyle = tipInk
         ctx.beginPath()
         ctx.arc(hx, hy, wordWidth * (Wd[upto] ?? 0) * 0.9, 0, Math.PI * 2)

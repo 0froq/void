@@ -26,7 +26,9 @@ Collapsible 是受控折叠面板：`v-model` 为布尔值，默认关闭。原�
 
 `disabled` 只阻止用户触发切换，不阻止父组件修改模型。使用 trigger 插槽时，必须将完整的 `props` 对象绑定到真实 button，以保留生成的 `id`、`type`、`disabled`、ARIA 属性、class 和点击处理器。触发按钮通过 `aria-controls` 关联面板生成的 ID。
 
-Collapsible 不动画面板高度；只有箭头会旋转，减少动态效果偏好会禁用该过渡。它不实现 Accordion 或自动分组行为。面板内容和业务状态由消费端负责。
+面板展开时，触发器为 `position: sticky; top: 0`，会一直钉在顶部，直到面板结束，就像代码编辑器里钉住当前所在层级的标题；标题下方有一小段渐隐，内容滑到它下面时逐渐淡出。它不需要自己的滚动容器，但祖先元素不能用 `overflow: hidden`、`auto` 或 `scroll` 裁剪它（改用 `overflow: clip`）。宿主页面顶部有固定栏时，用栏的高度覆盖 `.ui-collapsible.is-open > .ui-collapsible-trigger` 的 `top`。
+
+内置触发器在标题后面画一条细线。悬停时强调色沿这条线长出；展开或键盘聚焦时，整条线收成强调色。面板高度会缓动展开和收起，内容始终保持挂载。减少动态效果偏好会关掉细线、箭头和高度过渡。它不实现 Accordion 或自动分组行为。面板内容和业务状态由消费端负责。
 
 ## 用法
 

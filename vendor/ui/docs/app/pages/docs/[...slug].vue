@@ -73,8 +73,11 @@ const index = computed(() => pages.value.findIndex(item => item.to === herePath.
 const prev = computed(() => pages.value[index.value - 1])
 const next = computed(() => pages.value[index.value + 1])
 
-useHead({ title: () => doc.value?.title })
-useSeoMeta({ description: () => doc.value?.description })
+useContentOgImage(doc, 'docs', {
+  title: () => doc.value?.title,
+  description: () => doc.value?.description,
+  type: 'article',
+})
 </script>
 
 <template>

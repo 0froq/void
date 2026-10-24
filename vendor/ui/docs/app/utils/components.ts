@@ -1,5 +1,5 @@
 import type { Component } from 'vue'
-import { componentFile } from '../../shared/component-files'
+import { componentFile } from '~/utils/component-files'
 
 interface ModuleShape {
   default?: Component

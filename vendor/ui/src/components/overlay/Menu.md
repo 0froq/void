@@ -1,6 +1,6 @@
 ---
-title: DropdownMenu
-designStatus: ai-draft
+title: Menu
+designStatus: reviewed
 description: An accessible menu with optional nested submenus.
 model:
   type: boolean
@@ -52,7 +52,7 @@ slots:
     description: Replaces an item's label content and receives item. Keep this content non-interactive; do not add interactive descendants.
 ---
 
-DropdownMenu is an accessible menu that can contain nested submenus. Its trigger slot must resolve to one real button; a button component used there must forward the attributes and listeners provided by the primitive. Without that slot, `label` supplies the trigger text. `disabled` affects only the trigger.
+Menu is an accessible menu that can contain nested submenus. Its trigger slot must resolve to one real button; a button component used there must forward the attributes and listeners provided by the primitive. Without that slot, `label` supplies the trigger text. `disabled` affects only the trigger.
 
 `items` use the shared `MenuItem` shape: `{ value, label, disabled?, separatorBefore?, children? }`. Keep `value` unique among siblings. A non-empty `children` array makes an entry a submenu trigger, which cannot itself be selected; an empty or omitted `children` array makes it a selectable leaf. `separatorBefore` adds a visual separator before the entry except at the beginning of its sibling list. The `item` slot receives `{ item }` and replaces only the label content. Keep it free of buttons, links, or other interactive descendants so menu keyboard interaction remains intact.
 
@@ -62,12 +62,16 @@ The component supports `v-model` for its boolean open state, defaulting to `fals
 
 By default, content is teleported into the closest consumer element with `class="ui"`; if there is none, it renders inline. On the server, only the trigger is rendered; menu content appears after opening on the client. A custom `portalTo` target must already exist and provide the consumer's theme and UI tokens. The library does not add Reka UI CSS variables to its token contract. Import `style.css` in the caller and provide a `.ui` ancestor for the library styles and default portal target.
 
+## Surface
+
+The list is a hairline (`--ui-line`), radius 0, and no shadow. A highlighted row is underlined. There is no fill and no accent bar. Row padding leaves a start gutter. Mark the current page with `aria-current="page"` on the item content and that gutter shows a 5px accent dot. Type is 11px `--ui-font-meta`. The same list is used by Select. See [Language](/docs/language).
+
 ## Usage
 
 ```vue
 <script setup lang="ts">
 import type { MenuItem } from '@froq/ui/vue'
-import { Button, DropdownMenu } from '@froq/ui'
+import { Button, Menu } from '@froq/ui'
 import { ref } from 'vue'
 import '@froq/ui/style.css'
 
@@ -94,7 +98,7 @@ function selectItem(item: MenuItem, event: Event) {
 
 <template>
   <div class="ui">
-    <DropdownMenu
+    <Menu
       v-model="open"
       label="Document actions"
       :items="items"
@@ -103,7 +107,7 @@ function selectItem(item: MenuItem, event: Event) {
       <template #trigger>
         <Button>Document actions</Button>
       </template>
-    </DropdownMenu>
+    </Menu>
   </div>
 </template>
 ```

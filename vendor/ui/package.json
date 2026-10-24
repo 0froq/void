@@ -22,7 +22,9 @@
     "dev": "pnpm --filter docs dev",
     "generate": "pnpm --filter docs generate",
     "build": "pnpm --filter docs generate",
+    "deploy": "pnpm generate && cf deploy",
     "preview": "pnpm --filter docs preview",
+    "preview:deploy": "pnpm generate && cf previews deploy",
     "lint": "eslint . && pnpm --filter docs lint",
     "lint:fix": "eslint . --fix && pnpm --filter docs lint:fix",
     "typecheck": "vue-tsc --noEmit && pnpm --filter docs typecheck",
@@ -44,11 +46,13 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev",
     "@types/node": "catalog:dev",
+    "cf": "catalog:dev",
     "eslint": "catalog:dev",
     "eslint-plugin-format": "catalog:dev",
     "jiti": "catalog:dev",
     "typescript": "catalog:dev",
     "vue": "catalog:prod",
-    "vue-tsc": "catalog:dev"
+    "vue-tsc": "catalog:dev",
+    "wrangler": "catalog:dev"
   }
 }

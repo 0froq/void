@@ -3,6 +3,8 @@ dist
 .nuxt
 .output
 .data
+.cloudflare
+.wrangler
 .eslintcache
 *.log
 .DS_Store

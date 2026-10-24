@@ -249,7 +249,8 @@ export function createInkWash(options: PaperOptions): PaperLayer | null {
       if (!ctx)
         continue
       ctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
-      const t = ctx.measureText(m.el.firstChild?.textContent || '.')
+      // SSR slot anchors may be the first child. Element text excludes those comments.
+      const t = ctx.measureText(m.el.textContent || '.')
       m.glyph = {
         cx: (t.actualBoundingBoxRight - t.actualBoundingBoxLeft) / 2,
         cy: (t.actualBoundingBoxDescent - t.actualBoundingBoxAscent) / 2,

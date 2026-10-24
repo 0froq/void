@@ -3,7 +3,10 @@ const { t } = useI18n()
 const link = useSiteLink()
 const sections = componentSections()
 
-useHead({ title: () => t('components.title') })
+usePaperOgImage({
+  title: () => t('components.title'),
+  description: () => t('components.lede'),
+})
 
 const { docFor } = await useComponentDocs()
 
@@ -14,10 +17,9 @@ function sectionLabel(id: '' | 'form' | 'prose'): string {
 
 <template>
   <div>
-    <ComponentStatus
-      class="catalog-design-status"
-      explain
-    />
+    <p class="catalog-design-status">
+      {{ t('components.statusGate') }}
+    </p>
     <section
       v-for="section in sections"
       :key="section.id || 'rest'"
@@ -44,7 +46,7 @@ function sectionLabel(id: '' | 'form' | 'prose'): string {
           <NuxtLink :to="link(entry.to)">
             {{ entry.name }}
           </NuxtLink>
-          <ComponentStatus />
+          <ComponentStatus :status="docFor(group.id, entry.name)?.designStatus" />
           <template v-if="docFor(group.id, entry.name)?.description">
             {{ docFor(group.id, entry.name)?.description }}
           </template>
@@ -56,7 +58,10 @@ function sectionLabel(id: '' | 'form' | 'prose'): string {
 
 <style scoped>
 .catalog-design-status {
-  margin-bottom: 24px;
+  max-width: 38rem;
+  margin: 0 0 24px;
+  color: var(--ui-muted);
+  font-size: 13px;
 }
 
 .component-block {

@@ -1,5 +1,9 @@
 # UI library handoff
 
+## Design status gate
+
+Component notes use `designStatus`: `ai-draft`, then `reviewed`, then `stable`. The docs badge reads that field. Menu and Select lists are `reviewed` after the floating-list pass. The 2026-10-01 note below describes the earlier state, when every note was `ai-draft`.
+
 ## Current design status (2026-10-01)
 
 The maintainer confirmed `1000o = 0froq/1000-observations` and accepted the current implementation as sufficient for now. All 50 components remain **AI Draft / awaiting manual design review**, not maintainer-designed or visually approved. The 100 sibling references record `designStatus: ai-draft`; documentation catalog, concept and detail pages show the shared badge. The homepage is now an editorial specimen with real local Choice/Toggle interactions and the discovered concept index. Site-wide Banner presents the translated WIP notice in normal flow above the header, with caller-owned content/actions/dismissal. No consumer migration or publication is implied.

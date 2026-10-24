@@ -20,7 +20,7 @@
   position: absolute;
   inset: 0;
   border-radius: var(--ui-radius);
-  background: color-mix(in srgb, var(--ui-fg) 7%, var(--ui-bg));
+  background: color-mix(in srgb, var(--ui-fg) 7%, transparent);
   pointer-events: none;
 }
 

@@ -10,6 +10,8 @@ export type { PaperMode, PaperSlice } from './paper'
 
 export { looseEllipse, toPath } from './pen'
 export type { Point } from './pen'
+export { createScrollGesture } from './scroll'
+export type { ScrollBounds, ScrollOwner } from './scroll'
 export { layoutText as layoutHandwriting } from './signature/hand-font'
 export { createInkWash } from './signature/paper'
 export { createPenStroke } from './signature/pen'

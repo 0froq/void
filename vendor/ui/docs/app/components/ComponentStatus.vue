@@ -1,21 +1,57 @@
 <script setup lang="ts">
-withDefaults(defineProps<{
+export type DesignStatus = 'ai-draft' | 'reviewed' | 'stable'
+
+const props = withDefaults(defineProps<{
   explain?: boolean
-}>(), { explain: false })
+  status?: DesignStatus
+}>(), {
+  explain: false,
+  status: 'ai-draft',
+})
 
 const { t } = useI18n()
+
+const label = computed(() => {
+  switch (props.status) {
+    case 'ai-draft':
+      return t('components.status.ai-draft')
+    case 'reviewed':
+      return t('components.status.reviewed')
+    case 'stable':
+      return t('components.status.stable')
+    default: {
+      const unreachable: never = props.status
+      return unreachable
+    }
+  }
+})
+
+const description = computed(() => {
+  switch (props.status) {
+    case 'ai-draft':
+      return t('components.statusDescription.ai-draft')
+    case 'reviewed':
+      return t('components.statusDescription.reviewed')
+    case 'stable':
+      return t('components.statusDescription.stable')
+    default: {
+      const unreachable: never = props.status
+      return unreachable
+    }
+  }
+})
 </script>
 
 <template>
   <span class="design-status">
     <span
       class="design-status-badge"
-      :title="t('components.draftDescription')"
-    >{{ t('components.draft') }}</span>
+      :title="description"
+    >{{ label }}</span>
     <span
       v-if="explain"
       class="design-status-description"
-    >{{ t('components.draftDescription') }}</span>
+    >{{ description }}</span>
   </span>
 </template>
 

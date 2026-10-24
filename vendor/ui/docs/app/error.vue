@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 
-defineProps<{ error: NuxtError }>()
+const props = defineProps<{ error: NuxtError }>()
 
 const { t } = useI18n()
 const link = useSiteLink()
 
-useHead({ title: () => t('notFound.title') })
+usePaperOgImage({
+  title: () => t('notFound.title'),
+  description: () => props.error.statusMessage || props.error.message,
+})
 </script>
 
 <template>
