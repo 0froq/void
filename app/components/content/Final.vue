@@ -1,15 +1,18 @@
 <script setup lang="ts">
 // The closing line. Its full stop is where the pen ends and the last colour lands.
-withDefaults(defineProps<{
-  id?: string
-  title?: string | null
-  /** Name drawn on the title block while `title` is empty. */
-  titleName?: string
-  lede?: string
-  cta?: boolean
-  /** A quieter sign-off for inner pages: smaller, no call to action. */
-  end?: boolean
-}>(), { id: undefined, title: null, titleName: 'final.title', lede: undefined, cta: true })
+withDefaults(
+  defineProps<{
+    id?: string
+    title?: string | null
+    /** Name drawn on the title block while `title` is empty. */
+    titleName?: string
+    lede?: string
+    cta?: boolean
+    /** A quieter sign-off for inner pages: smaller, no call to action. */
+    end?: boolean
+  }>(),
+  { id: undefined, title: null, titleName: 'final.title', lede: undefined, cta: true },
+)
 </script>
 
 <template>

@@ -2,25 +2,30 @@
 import type { Fact } from '~/types'
 
 // The pen circles the amount
-withDefaults(defineProps<{
-  price?: string | null
-  period?: string
-  lede?: string
-  facts?: Fact[]
-}>(), { price: null, period: undefined, lede: undefined, facts: () => [] })
+withDefaults(
+  defineProps<{
+    price?: string | null
+    period?: string
+    lede?: string
+    facts?: Fact[]
+  }>(),
+  { price: null, period: undefined, lede: undefined, facts: () => [] },
+)
 </script>
 
 <template>
   <div class="l-price">
     <p class="l-amount">
-      <span data-anchor="price"><Fill
-        :value="price"
-        name="price.price"
-        :size="2"
-      /></span><small v-if="period != null">/<Fill
-        :value="period"
-        name="price.period"
-        :size="6"
+      <span data-anchor="price"
+        ><Fill
+          :value="price"
+          name="price.price"
+          :size="2" /></span
+      ><small v-if="period != null"
+        >/<Fill
+          :value="period"
+          name="price.period"
+          :size="6"
       /></small>
     </p>
     <div>

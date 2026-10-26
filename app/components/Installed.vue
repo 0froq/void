@@ -4,9 +4,8 @@ const copy = useCopy()
 const installed = useInstalled()
 const back = ref<HTMLButtonElement>()
 
-watch(installed, (on) => {
-  if (on)
-    setTimeout(() => back.value?.focus({ preventScroll: true }), 900)
+watch(installed, on => {
+  if (on) setTimeout(() => back.value?.focus({ preventScroll: true }), 900)
 })
 </script>
 

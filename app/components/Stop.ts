@@ -17,8 +17,7 @@ export default defineComponent({
   },
   setup(props) {
     return (): VNode | (VNode | string)[] => {
-      if (!isFilled(props.text))
-        return placeholder(props.size, props.name || undefined)
+      if (!isFilled(props.text)) return placeholder(props.size, props.name || undefined)
       const { body, stop } = splitStop(props.text, props.fallback)
       const mark = h('span', { 'class': 'l-mark', 'data-anchor': props.anchor }, stop)
       return stop ? [...rich(body), mark] : rich(body)

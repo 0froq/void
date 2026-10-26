@@ -7,10 +7,11 @@
   --line: rgba(26, 25, 23, 0.12);
   --accent: #e8431f;
   --font-display:
-    'Instrument Serif', 'Iowan Old Style', Georgia, 'Songti SC', 'Noto Serif SC', 'Source Han Serif SC', serif;
+    'Instrument Serif', 'Iowan Old Style', Georgia, 'Songti SC', 'Noto Serif SC',
+    'Source Han Serif SC', serif;
   --font-text:
-    'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB',
-    'Noto Sans SC', sans-serif;
+    'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'PingFang SC',
+    'Hiragino Sans GB', 'Noto Sans SC', sans-serif;
   --font-meta: 'Geist Mono Variable', 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --display-scale: 1;
   --poster-scale: 1;
@@ -232,7 +233,9 @@ code {
   font-family: var(--font-display);
   font-weight: 400;
   /* Long names shrink so the word always fits the width */
-  font-size: calc(clamp(88px, min(27vw, calc(108vw / var(--len, 4))), 440px) * var(--display-scale));
+  font-size: calc(
+    clamp(88px, min(27vw, calc(108vw / var(--len, 4))), 440px) * var(--display-scale)
+  );
   line-height: 0.78;
   letter-spacing: -0.045em;
 }

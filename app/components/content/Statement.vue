@@ -12,7 +12,7 @@ withDefaults(defineProps<{ lines?: string[] }>(), { lines: () => [] })
         v-for="(line, index) in lines"
         :key="index"
       >
-        <br v-if="index"><Fill
+        <br v-if="index" /><Fill
           v-if="!isFilled(line)"
           :name="`statement.${index}`"
           :size="16"
