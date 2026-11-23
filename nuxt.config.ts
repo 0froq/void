@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { countCardWords } from '@froq/og-covers-layer/card-words'
 import { IMAGE_ORIGIN } from './app/utils/site'
@@ -7,16 +6,13 @@ import { keepEmptyTitle } from './shared/empty-title'
 import { markFinalStop } from './shared/final-mark'
 import { listPublicShareImages } from './shared/public-files'
 
-// The og-layer extend installs with `corepack pnpm install --ignore-workspace`
-// before hooks run. That install does not read this repo's allowBuilds, and
-// pnpm 12 exits when a dependency build is still unapproved.
-process.env.pnpm_config_strict_dep_builds ??= 'false'
-
 const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineNuxtConfig({
   extends: [
-    ['github:0froq/og-layer#v0.2.1', { install: true }],
+    // Installed copy of og-layer v0.2.1 (af1587b). A github extend with
+    // `install: true` runs a second `pnpm install --ignore-workspace`.
+    '@froq/og-covers-layer',
   ],
 
   compatibilityDate: '2026-09-19',
@@ -28,8 +24,7 @@ export default defineNuxtConfig({
       keepEmptyTitle(content, file.body)
       if (typeof file.body === 'string')
         (content as { words?: number }).words = countCardWords(file.body)
-      if (collection.name === 'notes' || collection.name === 'docs')
-        markFinalStop(content.body)
+      if (collection.name === 'notes' || collection.name === 'docs') markFinalStop(content.body)
     },
   },
 
@@ -41,11 +36,7 @@ export default defineNuxtConfig({
 
   build: { transpile: ['@froq/ui'] },
 
-  modules: [
-    '@nuxt/content',
-    '@nuxtjs/i18n',
-    '@nuxt/eslint',
-  ],
+  modules: ['@nuxt/content', '@nuxtjs/i18n'],
 
   // DevTools hosts the OG Image tab (template hot reload). The host package is not a module.
   devtools: { enabled: true },
@@ -71,10 +62,12 @@ export default defineNuxtConfig({
     head: {
       link: [{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
       meta: [{ name: 'color-scheme', content: 'light dark' }],
-      script: [{
-        tagPosition: 'head',
-        innerHTML: `try{var t=localStorage.getItem('kit-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}`,
-      }],
+      script: [
+        {
+          tagPosition: 'head',
+          innerHTML: `try{var t=localStorage.getItem('kit-theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}`,
+        },
+      ],
     },
   },
 
@@ -116,6 +109,4 @@ export default defineNuxtConfig({
   },
 
   typescript: { strict: true },
-
-  eslint: { config: { standalone: false } },
 })

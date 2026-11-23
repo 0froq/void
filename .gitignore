@@ -10,6 +10,7 @@
 .nuxt
 .temp
 .output
+.vite
 .turbo
 .wrangler
 .cloudflare

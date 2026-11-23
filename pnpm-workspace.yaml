@@ -42,11 +42,25 @@ trustPolicyExclude:
   - postcss-unique-selectors@9.0.6
   - semver@6.3.1
   - stylehacks@9.0.8
+  # First publish of the Oxlint flat-config toolkit; required by @liangmi/vp-config.
+  - '@oxlint-flat-config/composer@0.3.1'
+  - oxlint-flat-config@0.4.0
+  - '@liangmi/vp-config@1.0.0'
 
 shellEmulator: true
 
 packages:
   - .
+
+overrides:
+  # Keep the versions already locked on main.
+  vue: 3.5.43
+  vue-i18n: 11.4.12
+  nitropack: 2.13.4
+  '@nuxt/cli': 4.0.1
+  '@nuxt/devtools': 3.4.2
+  vite@*: npm:@voidzero-dev/vite-plus-core@1.3.0
+  vitest@*: 5.0.5
 
 allowBuilds:
   '@takumi-rs/core': true
@@ -56,28 +70,26 @@ allowBuilds:
   vue-demi: false
   workerd: true
 
-catalog: {}
-
 catalogs:
   dev:
-    '@antfu/eslint-config': ^9.5.1
-    '@nuxt/eslint': ^1.17.0
+    '@liangmi/vp-config': 1.0.0
+    # ESLint used to bring this in. nuxt typecheck still needs it, including vendor/ui.
+    '@types/node': 26.6.2
     cf: 1.0.0-beta.12
-    eslint: ^9.39.0
-    eslint-plugin-format: ^2.0.1
-    lint-staged: ^16.1.6
-    nuxtseo-devtools-host: ^1
-    simple-git-hooks: ^2.14.0
+    lint-staged: 16.4.0
+    nuxtseo-devtools-host: 1.0.2
+    simple-git-hooks: 2.14.0
     typescript: ~5.9.3
-    vue-tsc: ^3.3.11
-    wrangler: ^4.136.0
+    vite-plus: 1.3.0
+    vue-tsc: 3.3.11
+    wrangler: 4.149.0
   prod:
-    '@fontsource-variable/geist': ^5.3.0
-    '@fontsource-variable/geist-mono': ^5.3.0
-    '@fontsource/instrument-serif': ^5.3.0
-    '@froq/og-covers-layer': github:0froq/og-layer#v0.1.0
-    '@nuxt/content': ^3.16.1
-    '@nuxtjs/i18n': ^10.6.0
-    nuxt: ^4.6.1
-    vue: ^3.5.43
-    zod: ^4.6.6
+    '@fontsource-variable/geist': 5.3.0
+    '@fontsource-variable/geist-mono': 5.3.0
+    '@fontsource/instrument-serif': 5.3.0
+    '@froq/og-covers-layer': github:0froq/og-layer#v0.2.1
+    '@nuxt/content': 3.16.1
+    '@nuxtjs/i18n': 10.6.0
+    nuxt: 4.6.1
+    vue: 3.5.43
+    zod: 4.6.7
