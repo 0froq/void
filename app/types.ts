@@ -34,9 +34,9 @@ export interface Palette {
 
 /** Optional overrides for type, scale and grid. Omitted keys keep the stylesheet defaults. */
 export interface Skin {
-  font?: { display?: string, text?: string, meta?: string }
+  font?: { display?: string; text?: string; meta?: string }
   /** 1 is the shipped page. Display, poster and title scale their own clamps. */
-  scale?: { display?: number, poster?: number, title?: number, section?: number }
+  scale?: { display?: number; poster?: number; title?: number; section?: number }
   gap?: string
   section?: string
   /** Margin column and body column. They should add up to 12. */
@@ -49,7 +49,7 @@ export interface ProductConfig {
   name: string
   /** The accent stop after the name. */
   mark: string
-  theme: { light: Palette, dark: Palette }
+  theme: { light: Palette; dark: Palette }
   skin?: Skin
   signature: Signature
   /** Where "Install" goes. `null` plays the vanish instead of navigating. */

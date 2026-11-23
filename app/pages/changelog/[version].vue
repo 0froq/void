@@ -7,32 +7,38 @@ const version = computed(() => String(route.params.version))
 
 const { data: release } = await useAsyncData(
   () => `changelog-${locale.value}-${version.value}`,
-  () => queryCollection('changelog').path(contentPath(`/changelog/${version.value}`)).first(),
+  () =>
+    queryCollection('changelog')
+      .path(contentPath(`/changelog/${version.value}`))
+      .first(),
 )
-if (!release.value)
-  throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
+if (!release.value) throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 
 useHead({ title: () => release.value?.title })
 const files = useRuntimeConfig().public.publicFiles
 const override = computed(() => contentOgOverride(release.value, 'changelog', files))
 if (override.value === undefined) {
-  defineOgImage(ogComponentName(release.value), {
-    title: () => paperFields(release.value).title,
-    description: () => paperFields(release.value, t('site.description')).description,
-    evergreen: () => paperFields(release.value).evergreen,
-    created: () => paperFields(release.value).created,
-    updated: () => paperFields(release.value).updated,
-    words: () => paperFields(release.value).words,
-    ...ogExtraProps(release.value),
-  }, {
-    alt: () => paperFields(release.value).title,
-  })
+  defineOgImage(
+    ogComponentName(release.value),
+    {
+      title: () => paperFields(release.value).title,
+      description: () => paperFields(release.value, t('site.description')).description,
+      evergreen: () => paperFields(release.value).evergreen,
+      created: () => paperFields(release.value).created,
+      updated: () => paperFields(release.value).updated,
+      words: () => paperFields(release.value).words,
+      ...ogExtraProps(release.value),
+    },
+    {
+      alt: () => paperFields(release.value).title,
+    },
+  )
 }
 useShareMeta({
   title: () => release.value?.title,
   description: () => release.value?.description,
   type: 'article',
-  image: () => override.value === undefined ? false : override.value,
+  image: () => (override.value === undefined ? false : override.value),
 })
 </script>
 
@@ -48,9 +54,7 @@ useShareMeta({
           {{ t('changelog.label') }}
         </NuxtLink>
       </template>
-      <template #meta>
-        {{ release.version }} · {{ release.date }}
-      </template>
+      <template #meta> {{ release.version }} · {{ release.date }} </template>
     </PageHead>
     <section class="l-section is-prose">
       <ContentRenderer

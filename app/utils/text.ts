@@ -1,9 +1,11 @@
 const STOP = /^(.*?)([.!?。！？])$/s
 
 /** Splits trailing punctuation off so a signature layer can take its place. */
-export function splitStop(text: string, fallback = ''): { body: string, stop: string } {
+export function splitStop(text: string, fallback = ''): { body: string; stop: string } {
   const match = STOP.exec(text.trim())
-  return match ? { body: match[1] ?? '', stop: match[2] ?? '' } : { body: text.trim(), stop: fallback }
+  return match
+    ? { body: match[1] ?? '', stop: match[2] ?? '' }
+    : { body: text.trim(), stop: fallback }
 }
 
 export function isFilled(value: unknown): value is string {
@@ -11,10 +13,11 @@ export function isFilled(value: unknown): value is string {
 }
 
 function collectText(node: unknown, out: string[]): void {
-  if (typeof node === 'string')
-    out.push(node)
+  if (typeof node === 'string') out.push(node)
   else if (Array.isArray(node))
-    node.forEach((child, index) => (index > 0 || typeof child !== 'string' ? collectText(child, out) : undefined))
+    node.forEach((child, index) =>
+      index > 0 || typeof child !== 'string' ? collectText(child, out) : undefined,
+    )
   else if (node && typeof node === 'object' && 'value' in node)
     collectText((node as { value: unknown }).value, out)
 }
@@ -25,6 +28,9 @@ export function readingMinutes(body: unknown): number {
   collectText(body, out)
   const text = out.join(' ')
   const cjk = (text.match(/[\u3400-\u9FFF]/g) ?? []).length
-  const words = text.replace(/[\u3400-\u9FFF]/g, ' ').split(/\s+/).filter(Boolean).length
+  const words = text
+    .replace(/[\u3400-\u9FFF]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length
   return Math.max(1, Math.round(words / 200 + cjk / 400))
 }

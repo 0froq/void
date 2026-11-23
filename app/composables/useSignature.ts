@@ -11,7 +11,12 @@ function readColors(): LayerColors {
   const html = document.documentElement
   const css = getComputedStyle(html)
   const get = (name: string): string => css.getPropertyValue(name).trim()
-  return { paper: get('--bg'), ink: get('--fg'), accent: get('--accent'), dark: html.dataset.theme === 'dark' }
+  return {
+    paper: get('--bg'),
+    ink: get('--fg'),
+    accent: get('--accent'),
+    dark: html.dataset.theme === 'dark',
+  }
 }
 
 function mixHex(first: string, weight: number, second: string): string {
@@ -27,19 +32,23 @@ function mixHex(first: string, weight: number, second: string): string {
 
 /** Tagline text the pen writes. A placeholder block is not copy. */
 function handCopy(el: HTMLElement | null): string {
-  if (!el)
-    return ''
+  if (!el) return ''
   const clone = el.cloneNode(true) as HTMLElement
   clone.querySelectorAll('.l-fill').forEach(node => node.remove())
   return (clone.textContent ?? '').trim()
 }
 
 function sectionsOf(root: HTMLElement): NonNullable<PenAnchors['sections']> {
-  return [...root.querySelectorAll<HTMLElement>('.l-section')].flatMap((section) => {
+  return [...root.querySelectorAll<HTMLElement>('.l-section')].flatMap(section => {
     const label = section.querySelector<HTMLElement>('[data-anchor="label"]')
-    if (!label)
-      return []
-    return [{ element: section, label, price: section.querySelector<HTMLElement>('[data-anchor="price"]') }]
+    if (!label) return []
+    return [
+      {
+        element: section,
+        label,
+        price: section.querySelector<HTMLElement>('[data-anchor="price"]'),
+      },
+    ]
   })
 }
 
@@ -70,7 +79,8 @@ export function useSignature(root: Ref<HTMLElement | undefined>, options: Signat
     },
     anchors: () => {
       const el = root.value
-      const find = (anchor: string): HTMLElement | null => el?.querySelector<HTMLElement>(`[data-anchor="${anchor}"]`) ?? null
+      const find = (anchor: string): HTMLElement | null =>
+        el?.querySelector<HTMLElement>(`[data-anchor="${anchor}"]`) ?? null
       const hand = find('tagline')
       const finalMark = find('final-mark')
       return {
@@ -93,7 +103,13 @@ export function useSignature(root: Ref<HTMLElement | undefined>, options: Signat
   })
 
   watch(
-    () => [signature.state.paper, signature.state.bloom, signature.state.stroke, signature.state.hand] as const,
+    () =>
+      [
+        signature.state.paper,
+        signature.state.bloom,
+        signature.state.stroke,
+        signature.state.hand,
+      ] as const,
     ([paper, bloom, stroke, hand]) => {
       const html = document.documentElement
       html.classList.toggle('has-paper', paper)

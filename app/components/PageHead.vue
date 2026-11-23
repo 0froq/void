@@ -1,23 +1,26 @@
 <script setup lang="ts">
 // Head of an inner page: a large title whose stop blooms, over a ruled line the pen draws
-withDefaults(defineProps<{
-  kicker?: string | null
-  kickerName?: string
-  title?: string | null
-  titleName?: string
-  lede?: string | null
-  ledeName?: string
-  long?: boolean
-  /** A shorter head for reference pages, where the content should start above the fold. */
-  compact?: boolean
-}>(), {
-  kicker: null,
-  kickerName: 'kicker',
-  title: null,
-  titleName: 'title',
-  lede: null,
-  ledeName: 'lede',
-})
+withDefaults(
+  defineProps<{
+    kicker?: string | null
+    kickerName?: string
+    title?: string | null
+    titleName?: string
+    lede?: string | null
+    ledeName?: string
+    long?: boolean
+    /** A shorter head for reference pages, where the content should start above the fold. */
+    compact?: boolean
+  }>(),
+  {
+    kicker: null,
+    kickerName: 'kicker',
+    title: null,
+    titleName: 'title',
+    lede: null,
+    ledeName: 'lede',
+  },
+)
 </script>
 
 <template>

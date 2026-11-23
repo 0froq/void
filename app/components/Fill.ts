@@ -3,11 +3,15 @@ import { defineComponent, h } from 'vue'
 
 /** A labeled block standing in for copy that has not been replaced yet. */
 export function placeholder(size: number, name?: string): VNode {
-  return h('span', {
-    'class': 'l-fill',
-    'style': { '--fill': size },
-    'data-slot': name || undefined,
-  }, name ?? '')
+  return h(
+    'span',
+    {
+      'class': 'l-fill',
+      'style': { '--fill': size },
+      'data-slot': name || undefined,
+    },
+    name ?? '',
+  )
 }
 
 export default defineComponent({
@@ -20,6 +24,7 @@ export default defineComponent({
     size: { type: Number, default: 8 },
   },
   setup(props) {
-    return (): VNode | string => isFilled(props.value) ? props.value : placeholder(props.size, props.name || undefined)
+    return (): VNode | string =>
+      isFilled(props.value) ? props.value : placeholder(props.size, props.name || undefined)
   },
 })
