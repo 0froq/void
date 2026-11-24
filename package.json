@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": "^24.21.0 || >=26.0.0"
+  },
   "description": "A lovingly art-directed product that returns void. Zero side-effects.",
   "scripts": {
     "dev": "nuxt dev",
@@ -12,9 +15,12 @@
     "deploy": "pnpm generate && cf deploy",
     "preview": "nuxt preview",
     "preview:deploy": "pnpm generate && cf previews deploy",
-    "lint": "eslint . --cache --concurrency=auto",
-    "lint:fix": "eslint . --cache --concurrency=auto --fix",
+    "lint": "vp lint -c vp.config.ts",
+    "lint:fix": "vp lint --fix -c vp.config.ts",
+    "fmt": "vp fmt -c vp.config.ts",
+    "fmt:check": "vp fmt --check -c vp.config.ts",
     "typecheck": "nuxt typecheck",
+    "check": "vp run lint && vp run fmt:check && vp run typecheck",
     "postinstall": "nuxt prepare",
     "prepare": "npx simple-git-hooks"
   },
@@ -31,15 +37,14 @@
     "zod": "catalog:prod"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "catalog:dev",
-    "@nuxt/eslint": "catalog:dev",
+    "@liangmi/vp-config": "catalog:dev",
+    "@types/node": "catalog:dev",
     "cf": "catalog:dev",
-    "eslint": "catalog:dev",
-    "eslint-plugin-format": "catalog:dev",
     "lint-staged": "catalog:dev",
     "nuxtseo-devtools-host": "catalog:dev",
     "simple-git-hooks": "catalog:dev",
     "typescript": "catalog:dev",
+    "vite-plus": "catalog:dev",
     "vue-tsc": "catalog:dev",
     "wrangler": "catalog:dev"
   },
@@ -47,6 +52,9 @@
     "pre-commit": "pnpm i --frozen-lockfile --ignore-scripts --offline && npx lint-staged"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*": [
+      "vp lint --fix --no-error-on-unmatched-pattern -c vp.config.ts",
+      "vp fmt --no-error-on-unmatched-pattern -c vp.config.ts"
+    ]
   }
 }

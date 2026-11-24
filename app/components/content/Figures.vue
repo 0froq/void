@@ -30,10 +30,11 @@ const cols = computed(() => Math.min(4, Math.max(1, props.items.length)))
           :value="item.value"
           :name="`figures.${index}.value`"
           :size="1"
-        /><small v-if="item.unit != null"><Fill
-          :value="item.unit"
-          :name="`figures.${index}.unit`"
-          :size="2"
+        /><small v-if="item.unit != null"
+          ><Fill
+            :value="item.unit"
+            :name="`figures.${index}.unit`"
+            :size="2"
         /></small>
       </dd>
       <dd

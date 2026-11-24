@@ -1,10 +1,13 @@
 <script setup lang="ts">
 // A numbered step with a command to copy; the pen underlines the numbers like any other label
-withDefaults(defineProps<{
-  label?: string | null
-  title?: string | null
-  code?: string
-}>(), { label: null, title: null, code: undefined })
+withDefaults(
+  defineProps<{
+    label?: string | null
+    title?: string | null
+    code?: string
+  }>(),
+  { label: null, title: null, code: undefined },
+)
 </script>
 
 <template>

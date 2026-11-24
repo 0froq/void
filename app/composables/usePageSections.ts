@@ -6,19 +6,24 @@ export interface PageSection {
 }
 
 /** Sections are `block`s with an `id`. A filled label wins; an empty one shows the id. */
-export function usePageSections(): { sections: Ref<PageSection[]>, current: Ref<string>, pinned: Ref<boolean> } {
+export function usePageSections(): {
+  sections: Ref<PageSection[]>
+  current: Ref<string>
+  pinned: Ref<boolean>
+} {
   const sections = ref<PageSection[]>([])
   const current = ref('')
   const pinned = ref(false)
 
   function read(): void {
-    sections.value = [...document.querySelectorAll<HTMLElement>('main section.l-section[id]')].map((section) => {
-      const label = section.querySelector('[data-anchor="label"]')
-      const text = label?.querySelector('.l-fill') ? '' : label?.textContent?.trim()
-      return { id: section.id, label: text || section.id }
-    })
-    if (!sections.value.some(section => section.id === current.value))
-      current.value = ''
+    sections.value = [...document.querySelectorAll<HTMLElement>('main section.l-section[id]')].map(
+      section => {
+        const label = section.querySelector('[data-anchor="label"]')
+        const text = label?.querySelector('.l-fill') ? '' : label?.textContent?.trim()
+        return { id: section.id, label: text || section.id }
+      },
+    )
+    if (!sections.value.some(section => section.id === current.value)) current.value = ''
   }
 
   function onScroll(): void {
@@ -27,8 +32,7 @@ export function usePageSections(): { sections: Ref<PageSection[]>, current: Ref<
     let active = ''
     for (const section of sections.value) {
       const node = document.getElementById(section.id)
-      if (node && node.getBoundingClientRect().top <= line)
-        active = section.id
+      if (node && node.getBoundingClientRect().top <= line) active = section.id
     }
     current.value = active
   }

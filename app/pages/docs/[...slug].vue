@@ -17,20 +17,25 @@ const { data } = await useAsyncData(
     const root = contentPath('/docs')
     const [doc, all] = await Promise.all([
       queryCollection('docs').path(`${root}${rest.value}`).first(),
-      queryCollection('docs').where('path', 'LIKE', `${root}%`).order('stem', 'ASC').select('path', 'title').all(),
+      queryCollection('docs')
+        .where('path', 'LIKE', `${root}%`)
+        .order('stem', 'ASC')
+        .select('path', 'title')
+        .all(),
     ])
     return { doc, all, root }
   },
 )
 const doc = computed(() => data.value?.doc)
-if (!doc.value)
-  throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
+if (!doc.value) throw createError({ statusCode: 404, statusMessage: 'Not found', fatal: true })
 
-const pages = computed(() => (data.value?.all ?? []).map(item => ({
-  title: item.title,
-  path: item.path,
-  to: link(`/docs${item.path.slice(data.value?.root.length ?? 0)}`),
-})))
+const pages = computed(() =>
+  (data.value?.all ?? []).map(item => ({
+    title: item.title,
+    path: item.path,
+    to: link(`/docs${item.path.slice(data.value?.root.length ?? 0)}`),
+  })),
+)
 const index = computed(() => pages.value.findIndex(item => item.path === doc.value?.path))
 const prev = computed(() => pages.value[index.value - 1])
 const next = computed(() => pages.value[index.value + 1])
@@ -39,22 +44,26 @@ useHead({ title: () => doc.value?.title })
 const files = useRuntimeConfig().public.publicFiles
 const override = computed(() => contentOgOverride(doc.value, 'docs', files))
 if (override.value === undefined) {
-  defineOgImage(ogComponentName(doc.value), {
-    title: () => paperFields(doc.value).title,
-    description: () => paperFields(doc.value, t('site.description')).description,
-    evergreen: () => paperFields(doc.value).evergreen,
-    created: () => paperFields(doc.value).created,
-    updated: () => paperFields(doc.value).updated,
-    words: () => paperFields(doc.value).words,
-    ...ogExtraProps(doc.value),
-  }, {
-    alt: () => paperFields(doc.value).title,
-  })
+  defineOgImage(
+    ogComponentName(doc.value),
+    {
+      title: () => paperFields(doc.value).title,
+      description: () => paperFields(doc.value, t('site.description')).description,
+      evergreen: () => paperFields(doc.value).evergreen,
+      created: () => paperFields(doc.value).created,
+      updated: () => paperFields(doc.value).updated,
+      words: () => paperFields(doc.value).words,
+      ...ogExtraProps(doc.value),
+    },
+    {
+      alt: () => paperFields(doc.value).title,
+    },
+  )
 }
 useShareMeta({
   title: () => doc.value?.title,
   description: () => doc.value?.description,
-  image: () => override.value === undefined ? false : override.value,
+  image: () => (override.value === undefined ? false : override.value),
 })
 </script>
 
@@ -102,7 +111,8 @@ useShareMeta({
           v-if="prev"
           :to="prev.to"
         >
-          ← <Fill
+          ←
+          <Fill
             :value="prev.title"
             name="doc.title"
             :size="10"

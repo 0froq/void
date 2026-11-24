@@ -9,13 +9,14 @@ const installed = useInstalled()
 const hidden = computed(() => installed.value || undefined)
 
 function onKey(event: KeyboardEvent): void {
-  if (event.key === 'Escape')
-    installed.value = false
+  if (event.key === 'Escape') installed.value = false
 }
 
 onMounted(() => {
   addEventListener('keydown', onKey)
-  watch(installed, on => document.documentElement.classList.toggle('is-installed', on), { immediate: true })
+  watch(installed, on => document.documentElement.classList.toggle('is-installed', on), {
+    immediate: true,
+  })
 })
 onBeforeUnmount(() => removeEventListener('keydown', onKey))
 </script>
@@ -25,7 +26,8 @@ onBeforeUnmount(() => removeEventListener('keydown', onKey))
     <a
       class="l-skip"
       href="#main"
-    >{{ t('site.skip') }}</a>
+      >{{ t('site.skip') }}</a
+    >
     <SiteHeader :inert="hidden" />
     <main
       id="main"

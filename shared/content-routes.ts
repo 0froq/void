@@ -11,22 +11,23 @@ export function changelogEntryRoutes(rootDir: string, defaultLocale: string): st
   const routes: string[] = []
   let locales: string[] = []
   try {
-    locales = readdirSync(contentDir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? [entry.name] : [])
-  }
-  catch {
+    locales = readdirSync(contentDir, { withFileTypes: true }).flatMap(entry =>
+      entry.isDirectory() ? [entry.name] : [],
+    )
+  } catch {
     return routes
   }
   for (const locale of locales) {
     let files: string[] = []
     try {
-      files = readdirSync(join(contentDir, locale, 'changelog')).filter(name => name.endsWith('.md'))
-    }
-    catch {
+      files = readdirSync(join(contentDir, locale, 'changelog')).filter(name =>
+        name.endsWith('.md'),
+      )
+    } catch {
       continue
     }
     const prefix = locale === defaultLocale ? '' : `/${locale}`
-    for (const file of files)
-      routes.push(`${prefix}/changelog/${file.replace(/\.md$/i, '')}`)
+    for (const file of files) routes.push(`${prefix}/changelog/${file.replace(/\.md$/i, '')}`)
   }
   return routes.sort()
 }
